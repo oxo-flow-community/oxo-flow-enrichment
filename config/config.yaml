@@ -1,0 +1,86 @@
+# Effective configuration of the oxo-flow-enrichment port.
+# Mirror of [config] in main.oxoflow; exported verbatim by the config_export
+# rule (upstream envs_export.smk rule config_export dumps the in-memory
+# config dict; this file is the oxo-flow equivalent, copied to
+# {result_path}/configs/ for reproducibility).
+# Upstream nested dicts (great_parameters, pycistarget_parameters,
+# column_names, adjp_th) are flattened into top-level keys, since oxo-flow
+# config substitution is flat (see README fidelity table).
+annotation: config/annotation.csv
+result_path: test/results/enrichment_analysis
+project_name: Corces_CellTypes
+genome: hg38
+species: homo_sapiens
+region_beds: test/data/CorcesATAC
+region_sets:
+    - Bcell_open_regions
+    - Ery_open_regions
+all_region_sets:
+    - Bcell_open_regions
+    - Ery_open_regions
+    - all_regions
+background_name: all_regions
+rnk_dir: test/data/CorcesRNA
+rnk_sets:
+    - Bcell_ranked
+    - Ery_ranked
+db_Azimuth_2023: test/resources/enrichment_analysis/Azimuth_2023.json
+db_Reactome: test/resources/enrichment_analysis/ReactomePathways.gmt
+lola_db_LOLACore: test/resources/LOLACore/hg38
+pycistarget_db_hg38_screen_v10clust: test/resources/enrichment_analysis/600regions_test.regions_vs_motifs.rankings.feather
+path_to_motif_annotations: test/resources/enrichment_analysis/89_motifs_test.tbl
+pycistarget_fraction_overlap_w_cistarget_database: 0.4
+pycistarget_auc_threshold: 0.005
+pycistarget_nes_threshold: 3
+pycistarget_rank_threshold: 0.05
+pycistarget_annotation_version: v10nr_clust
+pycistarget_annotations_to_use: "['Direct_annot', 'Motif_similarity_annot', 'Orthology_annot', 'Motif_similarity_and_Orthology_annot']"
+pycistarget_term_col: Direct_annot
+pycistarget_motif_similarity_fdr: 0.001
+pycistarget_orthologous_identity_threshold: 0
+great_min_gene_set_size: 0
+great_mode: basalPlusExt
+great_basal_upstream: 5000
+great_basal_downstream: 1000
+great_extension: 1000000
+great_map_associated_regions: 1
+cn_ORA_GSEApy_top_n: 25
+cn_ORA_GSEApy_p_value: P_value
+cn_ORA_GSEApy_adj_pvalue: Adjusted_P_value
+cn_ORA_GSEApy_effect_size: Odds_Ratio
+cn_ORA_GSEApy_overlap: Overlap
+cn_ORA_GSEApy_term: Term
+cn_preranked_GSEApy_top_n: 25
+cn_preranked_GSEApy_p_value: NOM_p_val
+cn_preranked_GSEApy_adj_pvalue: FDR_q_val
+cn_preranked_GSEApy_effect_size: NES
+cn_preranked_GSEApy_overlap: Tag
+cn_preranked_GSEApy_term: Term
+cn_GREAT_top_n: 25
+cn_GREAT_p_value: p_value_hyper
+cn_GREAT_adj_pvalue: p_adjust_hyper
+cn_GREAT_effect_size: fold_enrichment_hyper
+cn_GREAT_overlap: observed_region_hits
+cn_GREAT_term: description
+cn_LOLA_top_n: 25
+cn_LOLA_p_value: pValue
+cn_LOLA_adj_pvalue: qValue
+cn_LOLA_effect_size: oddsRatio
+cn_LOLA_overlap: support
+cn_LOLA_term: description
+cn_pycisTarget_top_n: 25
+cn_pycisTarget_p_value: AUC
+cn_pycisTarget_adj_pvalue: NES
+cn_pycisTarget_effect_size: NES
+cn_pycisTarget_overlap: Motif_hits
+cn_pycisTarget_term: description
+adjp_th_ORA_GSEApy: 0.05
+adjp_th_preranked_GSEApy: 0.05
+adjp_th_GREAT: 0.01
+adjp_th_LOLA: 0.01
+adjp_th_pycisTarget: 5
+top_terms_n: 5
+adjp_cap: 4
+or_cap: 5
+nes_cap: 5
+cluster_summary: 1

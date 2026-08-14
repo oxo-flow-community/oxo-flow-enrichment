@@ -1,0 +1,130 @@
+# Aggregate per-group enrichment results (upstream rule aggregate).
+# One rule block per (group, tool, db) combination present on the default
+# path: region-set groups (ATAC) feed GREAT/LOLA/pycisTarget/ORA_GSEApy,
+# ranked-set groups (RNA) feed preranked_GSEApy. The per-group feature set
+# list is gathered with expand_inputs (upstream get_group_paths).
+
+[workflow]
+name = "oxo-flow-enrichment-aggregate"
+version = "3.0.1"
+description = "Per-group aggregation fragment"
+
+[[rules]]
+name = "aggregate_ORA_GSEApy_Azimuth_2023_ATAC"
+description = "Aggregate ORA_GSEApy results of the ATAC group (Azimuth_2023)"
+input = []
+expand_inputs = [
+    { pattern = "{config.result_path}/{region_set}/ORA_GSEApy/Azimuth_2023/{region_set}_Azimuth_2023.csv", variables = { region_set = "config.region_sets" } }
+]
+output = ["{config.result_path}/ATAC/ORA_GSEApy/Azimuth_2023/ATAC_Azimuth_2023_all.csv"]
+shell = "python scripts/aggregate.py {input} --out {output[0]} --group ATAC --tool ORA_GSEApy --db Azimuth_2023"
+log = "logs/rules/aggregate_ORA_GSEApy_Azimuth_2023_ATAC.log"
+tags = ["aggregate", "GSEApy", "ORA"]
+
+[rules.environment]
+conda = "envs/gene_enrichment_analysis.yaml"
+
+[[rules]]
+name = "aggregate_ORA_GSEApy_Reactome_ATAC"
+description = "Aggregate ORA_GSEApy results of the ATAC group (Reactome)"
+input = []
+expand_inputs = [
+    { pattern = "{config.result_path}/{region_set}/ORA_GSEApy/Reactome/{region_set}_Reactome.csv", variables = { region_set = "config.region_sets" } }
+]
+output = ["{config.result_path}/ATAC/ORA_GSEApy/Reactome/ATAC_Reactome_all.csv"]
+shell = "python scripts/aggregate.py {input} --out {output[0]} --group ATAC --tool ORA_GSEApy --db Reactome"
+log = "logs/rules/aggregate_ORA_GSEApy_Reactome_ATAC.log"
+tags = ["aggregate", "GSEApy", "ORA"]
+
+[rules.environment]
+conda = "envs/gene_enrichment_analysis.yaml"
+
+[[rules]]
+name = "aggregate_preranked_GSEApy_Azimuth_2023_RNA"
+description = "Aggregate preranked_GSEApy results of the RNA group (Azimuth_2023)"
+input = []
+expand_inputs = [
+    { pattern = "{config.result_path}/{gene_set}/preranked_GSEApy/Azimuth_2023/{gene_set}_Azimuth_2023.csv", variables = { gene_set = "config.rnk_sets" } }
+]
+output = ["{config.result_path}/RNA/preranked_GSEApy/Azimuth_2023/RNA_Azimuth_2023_all.csv"]
+shell = "python scripts/aggregate.py {input} --out {output[0]} --group RNA --tool preranked_GSEApy --db Azimuth_2023"
+log = "logs/rules/aggregate_preranked_GSEApy_Azimuth_2023_RNA.log"
+tags = ["aggregate", "GSEApy", "GSEA"]
+
+[rules.environment]
+conda = "envs/gene_enrichment_analysis.yaml"
+
+[[rules]]
+name = "aggregate_preranked_GSEApy_Reactome_RNA"
+description = "Aggregate preranked_GSEApy results of the RNA group (Reactome)"
+input = []
+expand_inputs = [
+    { pattern = "{config.result_path}/{gene_set}/preranked_GSEApy/Reactome/{gene_set}_Reactome.csv", variables = { gene_set = "config.rnk_sets" } }
+]
+output = ["{config.result_path}/RNA/preranked_GSEApy/Reactome/RNA_Reactome_all.csv"]
+shell = "python scripts/aggregate.py {input} --out {output[0]} --group RNA --tool preranked_GSEApy --db Reactome"
+log = "logs/rules/aggregate_preranked_GSEApy_Reactome_RNA.log"
+tags = ["aggregate", "GSEApy", "GSEA"]
+
+[rules.environment]
+conda = "envs/gene_enrichment_analysis.yaml"
+
+[[rules]]
+name = "aggregate_GREAT_Azimuth_2023_ATAC"
+description = "Aggregate GREAT results of the ATAC group (Azimuth_2023)"
+input = []
+expand_inputs = [
+    { pattern = "{config.result_path}/{region_set}/GREAT/Azimuth_2023/{region_set}_Azimuth_2023.csv", variables = { region_set = "config.region_sets" } }
+]
+output = ["{config.result_path}/ATAC/GREAT/Azimuth_2023/ATAC_Azimuth_2023_all.csv"]
+shell = "python scripts/aggregate.py {input} --out {output[0]} --group ATAC --tool GREAT --db Azimuth_2023"
+log = "logs/rules/aggregate_GREAT_Azimuth_2023_ATAC.log"
+tags = ["aggregate", "GREAT"]
+
+[rules.environment]
+conda = "envs/gene_enrichment_analysis.yaml"
+
+[[rules]]
+name = "aggregate_GREAT_Reactome_ATAC"
+description = "Aggregate GREAT results of the ATAC group (Reactome)"
+input = []
+expand_inputs = [
+    { pattern = "{config.result_path}/{region_set}/GREAT/Reactome/{region_set}_Reactome.csv", variables = { region_set = "config.region_sets" } }
+]
+output = ["{config.result_path}/ATAC/GREAT/Reactome/ATAC_Reactome_all.csv"]
+shell = "python scripts/aggregate.py {input} --out {output[0]} --group ATAC --tool GREAT --db Reactome"
+log = "logs/rules/aggregate_GREAT_Reactome_ATAC.log"
+tags = ["aggregate", "GREAT"]
+
+[rules.environment]
+conda = "envs/gene_enrichment_analysis.yaml"
+
+[[rules]]
+name = "aggregate_LOLA_LOLACore_ATAC"
+description = "Aggregate LOLA results of the ATAC group (LOLACore)"
+input = []
+expand_inputs = [
+    { pattern = "{config.result_path}/{region_set}/LOLA/LOLACore/{region_set}_LOLACore.csv", variables = { region_set = "config.region_sets" } }
+]
+output = ["{config.result_path}/ATAC/LOLA/LOLACore/ATAC_LOLACore_all.csv"]
+shell = "python scripts/aggregate.py {input} --out {output[0]} --group ATAC --tool LOLA --db LOLACore"
+log = "logs/rules/aggregate_LOLA_LOLACore_ATAC.log"
+tags = ["aggregate", "LOLA"]
+
+[rules.environment]
+conda = "envs/gene_enrichment_analysis.yaml"
+
+[[rules]]
+name = "aggregate_pycisTarget_hg38_screen_v10clust_ATAC"
+description = "Aggregate pycisTarget results of the ATAC group (hg38_screen_v10clust)"
+input = []
+expand_inputs = [
+    { pattern = "{config.result_path}/{region_set}/pycisTarget/hg38_screen_v10clust/{region_set}_hg38_screen_v10clust.csv", variables = { region_set = "config.region_sets" } }
+]
+output = ["{config.result_path}/ATAC/pycisTarget/hg38_screen_v10clust/ATAC_hg38_screen_v10clust_all.csv"]
+shell = "python scripts/aggregate.py {input} --out {output[0]} --group ATAC --tool pycisTarget --db hg38_screen_v10clust"
+log = "logs/rules/aggregate_pycisTarget_hg38_screen_v10clust_ATAC.log"
+tags = ["aggregate", "pycisTarget"]
+
+[rules.environment]
+conda = "envs/gene_enrichment_analysis.yaml"

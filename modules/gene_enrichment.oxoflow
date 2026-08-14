@@ -1,0 +1,91 @@
+# Gene enrichment analyses (upstream rules: gene_ORA_GSEApy,
+# gene_preranked_GSEApy).
+# Upstream fans out over genes_dict (txt gene sets) + regions_dict (region
+# sets mapped to genes by region_gene_association_GREAT); the default
+# annotation has no txt gene sets, so the port fans out over region sets
+# only (config.region_sets). Background genes for region-derived gene sets
+# come from {background_name}/GREAT/genes.txt (upstream
+# get_background_gene_path).
+
+[workflow]
+name = "oxo-flow-enrichment-gene-enrichment"
+version = "3.0.1"
+description = "Gene enrichment fragment (GSEApy ORA + preranked)"
+
+[[rules]]
+name = "gene_ORA_GSEApy_Azimuth_2023"
+description = "Gene over-representation analysis (ORA) with GSEApy (Azimuth_2023 database)"
+input = [
+    "{config.result_path}/{region_set}/GREAT/genes.txt",
+    "{config.result_path}/{config.background_name}/GREAT/genes.txt",
+    "resources/{config.project_name}/enrichment_analysis/Azimuth_2023.gmt",
+]
+output = ["{config.result_path}/{region_set}/ORA_GSEApy/Azimuth_2023/{region_set}_Azimuth_2023.csv"]
+shell = "python scripts/gene_ORA_GSEApy.py {input[0]} {input[1]} {input[2]} {output[0]} Azimuth_2023"
+log = "logs/rules/gene_ORA_GSEApy_{region_set}_Azimuth_2023.log"
+tags = ["GSEApy", "ORA", "gene-enrichment"]
+
+[rules.scatter]
+variable = "region_set"
+values_from = "config.region_sets"
+
+[rules.environment]
+conda = "envs/gene_enrichment_analysis.yaml"
+
+[[rules]]
+name = "gene_ORA_GSEApy_Reactome"
+description = "Gene over-representation analysis (ORA) with GSEApy (Reactome database)"
+input = [
+    "{config.result_path}/{region_set}/GREAT/genes.txt",
+    "{config.result_path}/{config.background_name}/GREAT/genes.txt",
+    "resources/{config.project_name}/enrichment_analysis/Reactome.gmt",
+]
+output = ["{config.result_path}/{region_set}/ORA_GSEApy/Reactome/{region_set}_Reactome.csv"]
+shell = "python scripts/gene_ORA_GSEApy.py {input[0]} {input[1]} {input[2]} {output[0]} Reactome"
+log = "logs/rules/gene_ORA_GSEApy_{region_set}_Reactome.log"
+tags = ["GSEApy", "ORA", "gene-enrichment"]
+
+[rules.scatter]
+variable = "region_set"
+values_from = "config.region_sets"
+
+[rules.environment]
+conda = "envs/gene_enrichment_analysis.yaml"
+
+[[rules]]
+name = "gene_preranked_GSEApy_Azimuth_2023"
+description = "Preranked gene set enrichment analysis (GSEA) with GSEApy (Azimuth_2023 database)"
+input = [
+    "{config.rnk_dir}/{gene_set}.csv",
+    "resources/{config.project_name}/enrichment_analysis/Azimuth_2023.gmt",
+]
+output = ["{config.result_path}/{gene_set}/preranked_GSEApy/Azimuth_2023/{gene_set}_Azimuth_2023.csv"]
+shell = "python scripts/gene_preranked_GSEApy.py {input[0]} {input[1]} {output[0]} Azimuth_2023"
+log = "logs/rules/gene_preranked_GSEApy_{gene_set}_Azimuth_2023.log"
+tags = ["GSEApy", "GSEA", "gene-enrichment"]
+
+[rules.scatter]
+variable = "gene_set"
+values_from = "config.rnk_sets"
+
+[rules.environment]
+conda = "envs/gene_enrichment_analysis.yaml"
+
+[[rules]]
+name = "gene_preranked_GSEApy_Reactome"
+description = "Preranked gene set enrichment analysis (GSEA) with GSEApy (Reactome database)"
+input = [
+    "{config.rnk_dir}/{gene_set}.csv",
+    "resources/{config.project_name}/enrichment_analysis/Reactome.gmt",
+]
+output = ["{config.result_path}/{gene_set}/preranked_GSEApy/Reactome/{gene_set}_Reactome.csv"]
+shell = "python scripts/gene_preranked_GSEApy.py {input[0]} {input[1]} {output[0]} Reactome"
+log = "logs/rules/gene_preranked_GSEApy_{gene_set}_Reactome.log"
+tags = ["GSEApy", "GSEA", "gene-enrichment"]
+
+[rules.scatter]
+variable = "gene_set"
+values_from = "config.rnk_sets"
+
+[rules.environment]
+conda = "envs/gene_enrichment_analysis.yaml"

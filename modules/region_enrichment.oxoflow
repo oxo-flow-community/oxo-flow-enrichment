@@ -1,0 +1,94 @@
+# Region enrichment analyses (upstream rules:
+# region_enrichment_analysis_LOLA, region_enrichment_analysis_GREAT,
+# region_gene_association_GREAT).
+# Fan-out over region sets via [rules.scatter] (per-rule, config-driven);
+# the database dimension is baked per rule block (upstream fans out over the
+# database dict — the default-path databases are static blocks here).
+
+[workflow]
+name = "oxo-flow-enrichment-region-enrichment"
+version = "3.0.1"
+description = "Region enrichment fragment (LOLA, GREAT, region-gene association)"
+
+[[rules]]
+name = "region_enrichment_analysis_LOLA"
+description = "Region overlap enrichment analysis with LOLA"
+input = [
+    "{config.region_beds}/{region_set}.bed",
+    "{config.region_beds}/{config.background_name}.bed",
+    "{config.lola_db_LOLACore}",
+]
+output = ["{config.result_path}/{region_set}/LOLA/LOLACore/{region_set}_LOLACore.csv"]
+shell = "Rscript scripts/region_enrichment_analysis_LOLA.R {input[0]} {input[1]} {input[2]} {output[0]} LOLACore {config.genome} {region_set}"
+log = "logs/rules/region_enrichment_analysis_LOLA_{region_set}_LOLACore.log"
+tags = ["LOLA", "region-enrichment"]
+
+[rules.scatter]
+variable = "region_set"
+values_from = "config.region_sets"
+
+[rules.environment]
+conda = "envs/region_enrichment_analysis.yaml"
+
+[[rules]]
+name = "region_enrichment_analysis_GREAT_Azimuth_2023"
+description = "Region enrichment analysis with rGREAT (Azimuth_2023 database)"
+input = [
+    "{config.region_beds}/{region_set}.bed",
+    "{config.region_beds}/{config.background_name}.bed",
+    "resources/{config.project_name}/enrichment_analysis/Azimuth_2023.gmt",
+]
+output = ["{config.result_path}/{region_set}/GREAT/Azimuth_2023/{region_set}_Azimuth_2023.csv"]
+shell = "Rscript scripts/region_enrichment_analysis_GREAT.R {input[0]} {input[1]} {input[2]} {output[0]} {config.genome} {threads} {config.great_min_gene_set_size} {config.great_mode} {config.great_basal_upstream} {config.great_basal_downstream} {config.great_extension} {config.great_map_associated_regions} {config.cn_GREAT_adj_pvalue} {config.adjp_th_GREAT}"
+log = "logs/rules/region_enrichment_analysis_GREAT_{region_set}_Azimuth_2023.log"
+tags = ["GREAT", "region-enrichment"]
+
+[rules.scatter]
+variable = "region_set"
+values_from = "config.region_sets"
+
+[rules.environment]
+conda = "envs/region_enrichment_analysis.yaml"
+
+[[rules]]
+name = "region_enrichment_analysis_GREAT_Reactome"
+description = "Region enrichment analysis with rGREAT (Reactome database)"
+input = [
+    "{config.region_beds}/{region_set}.bed",
+    "{config.region_beds}/{config.background_name}.bed",
+    "resources/{config.project_name}/enrichment_analysis/Reactome.gmt",
+]
+output = ["{config.result_path}/{region_set}/GREAT/Reactome/{region_set}_Reactome.csv"]
+shell = "Rscript scripts/region_enrichment_analysis_GREAT.R {input[0]} {input[1]} {input[2]} {output[0]} {config.genome} {threads} {config.great_min_gene_set_size} {config.great_mode} {config.great_basal_upstream} {config.great_basal_downstream} {config.great_extension} {config.great_map_associated_regions} {config.cn_GREAT_adj_pvalue} {config.adjp_th_GREAT}"
+log = "logs/rules/region_enrichment_analysis_GREAT_{region_set}_Reactome.log"
+tags = ["GREAT", "region-enrichment"]
+
+[rules.scatter]
+variable = "region_set"
+values_from = "config.region_sets"
+
+[rules.environment]
+conda = "envs/region_enrichment_analysis.yaml"
+
+[[rules]]
+name = "region_gene_association_GREAT"
+description = "Region-gene association with rGREAT (genes for downstream gene-based analyses)"
+input = [
+    "{config.region_beds}/{region_set}.bed",
+    "resources/{config.project_name}/enrichment_analysis/Azimuth_2023.gmt",
+]
+output = [
+    "{config.result_path}/{region_set}/GREAT/genes.txt",
+    "{config.result_path}/{region_set}/GREAT/region_gene_associations.csv",
+    "{config.result_path}/{region_set}/GREAT/region_gene_associations.pdf",
+]
+shell = "Rscript scripts/region_gene_association_GREAT.R {input[0]} {input[1]} {output[0]} {output[1]} {output[2]} {config.genome} {threads} {config.great_min_gene_set_size} {config.great_mode} {config.great_basal_upstream} {config.great_basal_downstream} {config.great_extension}"
+log = "logs/rules/region_gene_association_GREAT_{region_set}.log"
+tags = ["GREAT", "region-gene-association"]
+
+[rules.scatter]
+variable = "region_set"
+values_from = "config.all_region_sets"
+
+[rules.environment]
+conda = "envs/region_enrichment_analysis.yaml"

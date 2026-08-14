@@ -1,0 +1,129 @@
+# Summary plots per group (upstream rule visualize).
+# One rule block per (group, tool, db) combination present on the default
+# path (mirrors modules/aggregate.oxoflow); each produces the topTerms and
+# specificTerms summary plots.
+
+[workflow]
+name = "oxo-flow-enrichment-visualize"
+version = "3.0.1"
+description = "Per-group summary plots fragment"
+
+[[rules]]
+name = "visualize_ORA_GSEApy_Azimuth_2023_ATAC"
+description = "Summary plots of aggregated ORA_GSEApy results (ATAC group, Azimuth_2023)"
+input = ["{config.result_path}/ATAC/ORA_GSEApy/Azimuth_2023/ATAC_Azimuth_2023_all.csv"]
+output = [
+    "{config.result_path}/ATAC/ORA_GSEApy/Azimuth_2023/ATAC_Azimuth_2023_summary_topTerms.png",
+    "{config.result_path}/ATAC/ORA_GSEApy/Azimuth_2023/ATAC_Azimuth_2023_summary_specificTerms.png",
+]
+shell = "Rscript scripts/overview_plot.R {input[0]} {output[0]} {output[1]} ORA_GSEApy Azimuth_2023 ATAC scripts/utils.R {config.cn_ORA_GSEApy_term} {config.cn_ORA_GSEApy_adj_pvalue} {config.cn_ORA_GSEApy_effect_size} {config.top_terms_n} {config.adjp_cap} {config.or_cap} {config.adjp_th_ORA_GSEApy} {config.cluster_summary}"
+log = "logs/rules/visualize_ORA_GSEApy_Azimuth_2023_ATAC.log"
+tags = ["visualize", "GSEApy", "ORA"]
+
+[rules.environment]
+conda = "envs/visualization.yaml"
+
+[[rules]]
+name = "visualize_ORA_GSEApy_Reactome_ATAC"
+description = "Summary plots of aggregated ORA_GSEApy results (ATAC group, Reactome)"
+input = ["{config.result_path}/ATAC/ORA_GSEApy/Reactome/ATAC_Reactome_all.csv"]
+output = [
+    "{config.result_path}/ATAC/ORA_GSEApy/Reactome/ATAC_Reactome_summary_topTerms.png",
+    "{config.result_path}/ATAC/ORA_GSEApy/Reactome/ATAC_Reactome_summary_specificTerms.png",
+]
+shell = "Rscript scripts/overview_plot.R {input[0]} {output[0]} {output[1]} ORA_GSEApy Reactome ATAC scripts/utils.R {config.cn_ORA_GSEApy_term} {config.cn_ORA_GSEApy_adj_pvalue} {config.cn_ORA_GSEApy_effect_size} {config.top_terms_n} {config.adjp_cap} {config.or_cap} {config.adjp_th_ORA_GSEApy} {config.cluster_summary}"
+log = "logs/rules/visualize_ORA_GSEApy_Reactome_ATAC.log"
+tags = ["visualize", "GSEApy", "ORA"]
+
+[rules.environment]
+conda = "envs/visualization.yaml"
+
+[[rules]]
+name = "visualize_preranked_GSEApy_Azimuth_2023_RNA"
+description = "Summary plots of aggregated preranked_GSEApy results (RNA group, Azimuth_2023)"
+input = ["{config.result_path}/RNA/preranked_GSEApy/Azimuth_2023/RNA_Azimuth_2023_all.csv"]
+output = [
+    "{config.result_path}/RNA/preranked_GSEApy/Azimuth_2023/RNA_Azimuth_2023_summary_topTerms.png",
+    "{config.result_path}/RNA/preranked_GSEApy/Azimuth_2023/RNA_Azimuth_2023_summary_specificTerms.png",
+]
+shell = "Rscript scripts/overview_plot.R {input[0]} {output[0]} {output[1]} preranked_GSEApy Azimuth_2023 RNA scripts/utils.R {config.cn_preranked_GSEApy_term} {config.cn_preranked_GSEApy_adj_pvalue} {config.cn_preranked_GSEApy_effect_size} {config.top_terms_n} {config.adjp_cap} {config.nes_cap} {config.adjp_th_preranked_GSEApy} {config.cluster_summary}"
+log = "logs/rules/visualize_preranked_GSEApy_Azimuth_2023_RNA.log"
+tags = ["visualize", "GSEApy", "GSEA"]
+
+[rules.environment]
+conda = "envs/visualization.yaml"
+
+[[rules]]
+name = "visualize_preranked_GSEApy_Reactome_RNA"
+description = "Summary plots of aggregated preranked_GSEApy results (RNA group, Reactome)"
+input = ["{config.result_path}/RNA/preranked_GSEApy/Reactome/RNA_Reactome_all.csv"]
+output = [
+    "{config.result_path}/RNA/preranked_GSEApy/Reactome/RNA_Reactome_summary_topTerms.png",
+    "{config.result_path}/RNA/preranked_GSEApy/Reactome/RNA_Reactome_summary_specificTerms.png",
+]
+shell = "Rscript scripts/overview_plot.R {input[0]} {output[0]} {output[1]} preranked_GSEApy Reactome RNA scripts/utils.R {config.cn_preranked_GSEApy_term} {config.cn_preranked_GSEApy_adj_pvalue} {config.cn_preranked_GSEApy_effect_size} {config.top_terms_n} {config.adjp_cap} {config.nes_cap} {config.adjp_th_preranked_GSEApy} {config.cluster_summary}"
+log = "logs/rules/visualize_preranked_GSEApy_Reactome_RNA.log"
+tags = ["visualize", "GSEApy", "GSEA"]
+
+[rules.environment]
+conda = "envs/visualization.yaml"
+
+[[rules]]
+name = "visualize_GREAT_Azimuth_2023_ATAC"
+description = "Summary plots of aggregated GREAT results (ATAC group, Azimuth_2023)"
+input = ["{config.result_path}/ATAC/GREAT/Azimuth_2023/ATAC_Azimuth_2023_all.csv"]
+output = [
+    "{config.result_path}/ATAC/GREAT/Azimuth_2023/ATAC_Azimuth_2023_summary_topTerms.png",
+    "{config.result_path}/ATAC/GREAT/Azimuth_2023/ATAC_Azimuth_2023_summary_specificTerms.png",
+]
+shell = "Rscript scripts/overview_plot.R {input[0]} {output[0]} {output[1]} GREAT Azimuth_2023 ATAC scripts/utils.R {config.cn_GREAT_term} {config.cn_GREAT_adj_pvalue} {config.cn_GREAT_effect_size} {config.top_terms_n} {config.adjp_cap} {config.or_cap} {config.adjp_th_GREAT} {config.cluster_summary}"
+log = "logs/rules/visualize_GREAT_Azimuth_2023_ATAC.log"
+tags = ["visualize", "GREAT"]
+
+[rules.environment]
+conda = "envs/visualization.yaml"
+
+[[rules]]
+name = "visualize_GREAT_Reactome_ATAC"
+description = "Summary plots of aggregated GREAT results (ATAC group, Reactome)"
+input = ["{config.result_path}/ATAC/GREAT/Reactome/ATAC_Reactome_all.csv"]
+output = [
+    "{config.result_path}/ATAC/GREAT/Reactome/ATAC_Reactome_summary_topTerms.png",
+    "{config.result_path}/ATAC/GREAT/Reactome/ATAC_Reactome_summary_specificTerms.png",
+]
+shell = "Rscript scripts/overview_plot.R {input[0]} {output[0]} {output[1]} GREAT Reactome ATAC scripts/utils.R {config.cn_GREAT_term} {config.cn_GREAT_adj_pvalue} {config.cn_GREAT_effect_size} {config.top_terms_n} {config.adjp_cap} {config.or_cap} {config.adjp_th_GREAT} {config.cluster_summary}"
+log = "logs/rules/visualize_GREAT_Reactome_ATAC.log"
+tags = ["visualize", "GREAT"]
+
+[rules.environment]
+conda = "envs/visualization.yaml"
+
+[[rules]]
+name = "visualize_LOLA_LOLACore_ATAC"
+description = "Summary plots of aggregated LOLA results (ATAC group, LOLACore)"
+input = ["{config.result_path}/ATAC/LOLA/LOLACore/ATAC_LOLACore_all.csv"]
+output = [
+    "{config.result_path}/ATAC/LOLA/LOLACore/ATAC_LOLACore_summary_topTerms.png",
+    "{config.result_path}/ATAC/LOLA/LOLACore/ATAC_LOLACore_summary_specificTerms.png",
+]
+shell = "Rscript scripts/overview_plot.R {input[0]} {output[0]} {output[1]} LOLA LOLACore ATAC scripts/utils.R {config.cn_LOLA_term} {config.cn_LOLA_adj_pvalue} {config.cn_LOLA_effect_size} {config.top_terms_n} {config.adjp_cap} {config.or_cap} {config.adjp_th_LOLA} {config.cluster_summary}"
+log = "logs/rules/visualize_LOLA_LOLACore_ATAC.log"
+tags = ["visualize", "LOLA"]
+
+[rules.environment]
+conda = "envs/visualization.yaml"
+
+[[rules]]
+name = "visualize_pycisTarget_hg38_screen_v10clust_ATAC"
+description = "Summary plots of aggregated pycisTarget results (ATAC group, hg38_screen_v10clust)"
+input = ["{config.result_path}/ATAC/pycisTarget/hg38_screen_v10clust/ATAC_hg38_screen_v10clust_all.csv"]
+output = [
+    "{config.result_path}/ATAC/pycisTarget/hg38_screen_v10clust/ATAC_hg38_screen_v10clust_summary_topTerms.png",
+    "{config.result_path}/ATAC/pycisTarget/hg38_screen_v10clust/ATAC_hg38_screen_v10clust_summary_specificTerms.png",
+]
+shell = "Rscript scripts/overview_plot.R {input[0]} {output[0]} {output[1]} pycisTarget hg38_screen_v10clust ATAC scripts/utils.R {config.cn_pycisTarget_term} {config.cn_pycisTarget_adj_pvalue} {config.cn_pycisTarget_effect_size} {config.top_terms_n} {config.adjp_cap} {config.or_cap} {config.adjp_th_pycisTarget} {config.cluster_summary}"
+log = "logs/rules/visualize_pycisTarget_hg38_screen_v10clust_ATAC.log"
+tags = ["visualize", "pycisTarget"]
+
+[rules.environment]
+conda = "envs/visualization.yaml"

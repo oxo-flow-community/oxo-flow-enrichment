@@ -1,0 +1,283 @@
+# load libraries
+library("ggplot2")
+library("svglite")
+library("reshape2")
+library("pheatmap")
+library("data.table")
+
+# Port of upstream workflow/scripts/overview_plot.R.
+# snakemake@input[["results_all"]], snakemake@output[["summary_plot_topTerms"|
+# "summary_plot_specificTerms"]], snakemake@wildcards[["tool"|"db"|"group"]],
+# snakemake@params[["utils_path"]] and the referenced config entries become
+# positional CLI arguments:
+# <results_all> <summary_plot_topTerms> <summary_plot_specificTerms>
+# <tool> <db> <group> <utils_path> <term_col> <adjp_col> <effect_col>
+# <top_n> <adjp_cap> <effect_cap> <adjp_th> <cluster_flag>
+
+# source utility functions
+# source("workflow/scripts/utils.R")
+# snakemake@source("./utils.R") # does not work when loaded as module (https://github.com/snakemake/snakemake/issues/2205)
+source(commandArgs(trailingOnly = TRUE)[7])
+
+# configs
+
+# input
+results_all_path <- commandArgs(trailingOnly = TRUE)[1]
+
+# output
+plot_path_topTerms <- commandArgs(trailingOnly = TRUE)[2]
+plot_path_specificTerms <- commandArgs(trailingOnly = TRUE)[3]
+
+# parameters
+tool <- commandArgs(trailingOnly = TRUE)[4]
+database <- commandArgs(trailingOnly = TRUE)[5]
+group <- commandArgs(trailingOnly = TRUE)[6]
+
+term_col <- commandArgs(trailingOnly = TRUE)[8]
+adjp_col <- commandArgs(trailingOnly = TRUE)[9]
+effect_col <- commandArgs(trailingOnly = TRUE)[10]
+
+top_n <- as.numeric(commandArgs(trailingOnly = TRUE)[11])
+adjp_cap <- as.numeric(commandArgs(trailingOnly = TRUE)[12])
+effect_cap <- as.numeric(commandArgs(trailingOnly = TRUE)[13])
+adjp_th <- as.numeric(commandArgs(trailingOnly = TRUE)[14])
+cluster_flag <- as.logical(as.numeric(commandArgs(trailingOnly = TRUE)[15]))
+plot_context <- paste(tool, database, group, sep = " | ")
+
+# stop early if results are empty
+if(file.size(results_all_path) == 0L){
+    make_message_plot(plot_path_topTerms, "No results found\naggregated result file is empty", plot_context)
+    make_message_plot(plot_path_specificTerms, "No results found\naggregated result file is empty", plot_context)
+    quit(save = "no", status = 0)
+}
+
+# load aggregated result dataframe
+results_all <- data.frame(fread(file.path(results_all_path), header=TRUE))
+
+# stop early if results consist of only one query
+if(length(unique(results_all$name))==1){
+    single_query <- unique(results_all$name)[1]
+    single_query_msg <- paste0("Only one query, so no group plot for ", single_query)
+    make_message_plot(plot_path_topTerms, single_query_msg, plot_context)
+    make_message_plot(plot_path_specificTerms, single_query_msg, plot_context)
+    quit(save = "no", status = 0)
+}
+
+# remove empty terms
+results_all <- results_all[results_all[[term_col]]!="",]
+
+make_no_sig_plot <- function(path, type){
+    comparator <- if (tool=="pycisTarget" | tool=="RcisTarget") ">=" else "<="
+    msg <- paste0(
+        "No significant matches found\n",
+        "threshold: ", adjp_col, " ", comparator, " ", adjp_th
+    )
+
+    make_message_plot(path, msg, plot_context, filename = paste0(group,'_',database,'_summary_', type))
+}
+
+make_summary_plot <- function(type = "topTerms"){
+    format_term_labels <- function(x){
+        x_short <- ifelse(nchar(x) > 72, paste0(substr(x, 1, 69), "..."), x)
+        gsub("(.{1,30})(\\s|\\.|$|_)", "\\1\n", x_short)
+    }
+
+    # determine terms to plot
+    top_terms <- c()
+    if (type == "topTerms"){
+        # pick top_n most significant terms per query (not necessarily statistically significant!)
+        for (query in unique(results_all$name)){
+            tmp_result <- results_all[results_all$name==query,]
+            top_n_tmp <- min(top_n, nrow(tmp_result))
+            if(tool=="pycisTarget" | tool=="RcisTarget"){
+                tmp_terms <- tmp_result[order(-tmp_result[[adjp_col]]), term_col][1:top_n_tmp]
+            }else{
+                tmp_terms <- tmp_result[order(tmp_result[[adjp_col]]), term_col][1:top_n_tmp]
+            }
+            top_terms <- unique(c(top_terms,tmp_terms))
+        }
+    } else if (type == "specificTerms"){
+        # for each query, take significant terms that have the lowest average -log10(adj-p) across all other queries
+        all_queries <- unique(results_all$name)
+        for (query in all_queries){
+            tmp_result <- results_all[results_all$name==query,]
+            if(tool=="pycisTarget" | tool=="RcisTarget"){
+                sig_mask <- tmp_result[[adjp_col]] >= adjp_th
+                # invert, to get the ranking right
+                tmp_result[[adjp_col]] <- -tmp_result[[adjp_col]]
+            } else {
+                # significant in current query
+                sig_mask <- tmp_result[[adjp_col]] <= adjp_th
+                # log10 transform p-values to avoid influence of small p-values
+                tmp_result[[adjp_col]] <- -log10(tmp_result[[adjp_col]])
+            }
+            sig_terms <- tmp_result[sig_mask, term_col]
+            if (length(sig_terms) == 0){
+                next
+            }
+            other_queries <- setdiff(all_queries, query)
+            # compute average across other queries
+            avg_other <- sapply(sig_terms, function(term){
+                vals <- sapply(other_queries, function(q){
+                    v <- results_all[results_all$name==q & results_all[[term_col]]==term, adjp_col]
+                    if (length(v) == 0) return(NA) else return(v[1])
+                })
+                if (tool=="pycisTarget" | tool=="RcisTarget"){
+                    vals[is.na(vals)] <- 0
+                    mean(vals)
+                } else {
+                    vals[is.na(vals)] <- 1
+                    mean(-log10(vals))
+                }
+            })
+            ordered_terms <- names(sort(avg_other, decreasing = FALSE))
+            top_n_tmp <- min(top_n, length(ordered_terms))
+            tmp_terms <- ordered_terms[1:top_n_tmp]
+            top_terms <- unique(c(top_terms, tmp_terms))
+        }
+        if (length(top_terms) == 0){
+            make_no_sig_plot(plot_path_specificTerms, type)
+            return()
+        }
+    } else {
+        stop("Unknown type: ", type)
+    }
+
+    # make adjusted p-vale and effect-size (odds-ratio or normalized enrichment scores) dataframes
+    adjp_df <- dcast(results_all, as.formula(paste(term_col, "~ name")), value.var = adjp_col)
+    rownames(adjp_df) <- adjp_df[[term_col]]
+    adjp_df[[term_col]] <- NULL
+    adjp_df <- adjp_df[,unique(results_all$name)]
+
+    effect_df <- dcast(results_all, as.formula(paste(term_col, "~ name")), value.var = effect_col)
+    rownames(effect_df) <- effect_df[[term_col]]
+    effect_df[[term_col]] <- NULL
+    effect_df <- effect_df[,unique(results_all$name)]
+
+    # filter by selected terms
+    adjp_df <- adjp_df[top_terms,]
+    effect_df <- effect_df[top_terms,]
+
+    # fill NA for effect_df with 1 or 0 (i.e., neutral enrichment) and for adjp_df with 1 (i.e., no significance)
+    effect_df[is.na(effect_df)] <- if (tool=="preranked_GSEApy" | tool=="pycisTarget" | tool=="RcisTarget") 0 else 1
+    adjp_df[is.na(adjp_df)] <- if (tool=="pycisTarget" | tool=="RcisTarget") 0 else 1
+
+    # make stat. sign. annotation for effect-size plot later
+    adjp_annot <- adjp_df
+    if(tool=="pycisTarget" | tool=="RcisTarget"){
+        adjp_annot[adjp_df >= adjp_th] <- "*"
+        adjp_annot[adjp_df < adjp_th] <- ""
+    }else{
+        adjp_annot[adjp_df <= adjp_th] <- "*"
+        adjp_annot[adjp_df > adjp_th] <- ""
+    }
+
+    # log2 transform odds ratios
+    if (tool!="preranked_GSEApy" & tool!="pycisTarget" & tool!="RcisTarget"){
+        effect_df <- log2(effect_df)
+    }
+
+    # transform and cap adjp and effect size
+    if(tool!="pycisTarget" & tool!="RcisTarget"){
+        # cap effect_df for plotting depending on tool  abs(log2(or)) < or_cap OR abs(NES) < nes_cap
+        effect_df[effect_df > effect_cap] <- effect_cap
+        effect_df[effect_df < -effect_cap] <- -effect_cap
+
+        # log10 transform adjp & cap -log10(adjpvalue) < adjp_cap
+        adjp_df <- -log10(adjp_df)
+        adjp_df[adjp_df > adjp_cap] <- adjp_cap
+    }
+
+    # perform hierarchical clustering on the effect-sizes (NES or log2 odds ratios) of the terms and reorder dataframe
+    if (nrow(effect_df)>1){
+        hc_rows <- hclust(dist(effect_df))
+        hc_row_names <- rownames(effect_df)[hc_rows$order]
+        effect_df <- effect_df[hc_rows$order,]
+    }else{
+        hc_row_names <- rownames(effect_df)
+    }
+
+    if (ncol(effect_df)>1 & cluster_flag){
+        hc_cols <- hclust(dist(t(effect_df)))
+        hc_col_names <- colnames(effect_df)[hc_cols$order]
+        effect_df <- effect_df[, hc_cols$order]
+    } else{
+        hc_col_names <- colnames(effect_df)
+    }
+
+    # add a column for the terms
+    effect_df$terms <- rownames(effect_df)
+    # melt data frame for plotting
+    plot_df <- melt(data=effect_df,
+                    id.vars="terms",
+                    measure.vars=colnames(adjp_df),
+                    variable.name = "feature_set",
+                    value.name = "effect")
+
+    # add adjusted p-values to plot dataframe
+    plot_df$adjp <- apply(plot_df, 1, function(x) adjp_df[x['terms'], x['feature_set']])
+
+    # set effect-size and adjusted p-value conditional to NA (odds ratios == 0 and NES == 0) for plotting
+    plot_df$effect[plot_df$effect==0] <- NA
+    plot_df$adjp[plot_df$adjp==0] <- NA
+
+    # ensure that the order of terms and feature sets is kept
+    plot_df$terms <- factor(plot_df$terms,levels=hc_row_names)
+    if (cluster_flag){
+        plot_df$feature_set <- factor(plot_df$feature_set, levels=hc_col_names)
+    }
+
+    # stat. significance star df
+    if(tool=="pycisTarget" | tool=="RcisTarget"){
+        adjp_star_df <- plot_df[(!is.na(plot_df$adjp)) & (plot_df$adjp >= adjp_th),]
+    }else{
+        adjp_star_df <- plot_df[(!is.na(plot_df$adjp)) & (plot_df$adjp >= -log10(adjp_th)),]
+    }
+
+    # plot
+    enr_plot <- ggplot(plot_df, aes(x=feature_set, y=terms, fill=effect, size=adjp))+
+            geom_point(shape=21, stroke=0.25, color = "grey22", alpha = 0.95) +
+            geom_point(data = adjp_star_df, aes(x=feature_set, y=terms), shape=8, size=0.8, color = "black", alpha = 0.7) +
+            scale_fill_gradient2(midpoint=0, low="#2563EB", mid="#F8FAFC", high="#DC2626", space ="Lab", name = if (tool=="preranked_GSEApy" | tool=="pycisTarget" | tool=="RcisTarget") effect_col else paste0("log2(",effect_col,")")) +
+            scale_y_discrete(labels = format_term_labels) +
+            scale_size_continuous(range = c(1.5,6.2), name = if (tool=="pycisTarget" | tool=="RcisTarget") adjp_col else paste("-log10(",adjp_col,")")) +
+            labs(title = paste(tool, database, sep = " | "), subtitle = group) +
+            clean_theme() +
+            theme(axis.text.x = element_text(angle = 45, hjust = 1, vjust=1),
+                  axis.title.x=element_blank(),
+                  axis.title.y=element_blank(),
+                  axis.text = element_text(size = 7.5, color = "grey12"),
+                  plot.title = element_text(size = 10, face = "bold", lineheight = 1.1, hjust = 0.5),
+                  plot.subtitle = element_text(size = 9, hjust = 0.5),
+                  panel.grid.major = element_line(color = "grey92", linewidth = 0.25),
+                  panel.grid.minor = element_blank(),
+                  legend.title = element_text(size = 8),
+                  legend.text = element_text(size = 7),
+                  legend.background = element_rect(fill = "white", color = NA),
+                  legend.position = "right",
+                  plot.margin = margin(7, 12, 7, 12)) +
+            guides(
+                size = guide_legend(reverse = TRUE),
+                fill = guide_colorbar(barheight = grid::unit(35, "pt"))
+            )
+
+    width <- max(7, 0.55 * dim(adjp_df)[2] + 5.5)
+    height <- max(4.5, 0.34 * dim(adjp_df)[1] + 2.4)
+
+    # save plot
+    if (type == "topTerms"){
+        plot_path <- plot_path_topTerms
+    } else {
+        plot_path <- plot_path_specificTerms
+    }
+    ggsave_new(filename = paste0(group,'_',database,'_summary_', type),
+               results_path = dirname(plot_path),
+               plot = enr_plot,
+               width = width,
+               height = height
+              )
+}
+
+# create both plots
+make_summary_plot(type = "topTerms")
+make_summary_plot(type = "specificTerms")

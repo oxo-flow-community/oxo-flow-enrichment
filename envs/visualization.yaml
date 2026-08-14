@@ -1,0 +1,13 @@
+name: visualization
+channels:
+  - conda-forge
+  - bioconda
+  - nodefaults
+dependencies:
+  - r-svglite=2.1.0
+  - r-ggplot2=3.5.0
+  - r-pheatmap=1.0.12
+  - r-reshape2=1.4.4
+  - r-data.table=1.15.2
+  - r-stringi=1.8.4
+

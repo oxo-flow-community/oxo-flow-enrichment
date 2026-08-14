@@ -1,0 +1,11 @@
+name: pycisTarget
+channels:
+  - conda-forge
+  - bioconda
+  - nodefaults
+dependencies:
+  - python=3.9.19
+  - attrs=23.2.0
+  - pandas=1.5.3
+  - pytables=3.9.2
+  - pycistarget=1.1

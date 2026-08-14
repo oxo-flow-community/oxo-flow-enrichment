@@ -1,0 +1,77 @@
+# Region TFBS motif enrichment with pycisTarget (upstream rules:
+# region_motif_enrichment_analysis_pycisTarget, process_results_pycisTarget).
+# Command text is the upstream shell verbatim (incl. the upstream
+# error-tolerance wrapper that touches empty outputs and exits 0).
+
+[workflow]
+name = "oxo-flow-enrichment-motif-enrichment"
+version = "3.0.1"
+description = "Motif enrichment fragment (pycisTarget)"
+
+[[rules]]
+name = "region_motif_enrichment_analysis_pycisTarget"
+description = "Region TFBS motif enrichment analysis with pycisTarget"
+input = [
+    "{config.region_beds}/{region_set}.bed",
+    "{config.pycistarget_db_hg38_screen_v10clust}",
+    "{config.path_to_motif_annotations}",
+]
+output = [
+    "{config.result_path}/{region_set}/pycisTarget/hg38_screen_v10clust/motif_enrichment_cistarget_{region_set}.hdf5",
+    "{config.result_path}/{region_set}/pycisTarget/hg38_screen_v10clust/motif_enrichment_cistarget_{region_set}.html",
+]
+shell = """
+{
+    pycistarget cistarget \
+        --cistarget_db_fname {input[1]} \
+        --bed_fname {input[0]} \
+        --output_folder $(dirname {output[0]}) \
+        --fr_overlap_w_ctx_db {config.pycistarget_fraction_overlap_w_cistarget_database} \
+        --auc_threshold {config.pycistarget_auc_threshold} \
+        --nes_threshold {config.pycistarget_nes_threshold} \
+        --rank_threshold {config.pycistarget_rank_threshold} \
+        --path_to_motif_annotations {input[2]} \
+        --annotation_version {config.pycistarget_annotation_version} \
+        --annotations_to_use {config.pycistarget_annotations_to_use} \
+        --motif_similarity_fdr {config.pycistarget_motif_similarity_fdr} \
+        --orthologous_identity_threshold {config.pycistarget_orthologous_identity_threshold} \
+        --species {config.species} \
+        --name {region_set} \
+        --output_mode 'hdf5' \
+        --write_html
+} || {
+    echo "An error occurred during the region TFBS motif enrichment analysis using pycisTarget"; touch {output[0]} {output[1]}; exit 0;
+}
+"""
+log = "logs/rules/region_enrichment_analysis_pycisTarget_{region_set}_hg38_screen_v10clust.log"
+tags = ["pycisTarget", "motif-enrichment"]
+
+[rules.scatter]
+variable = "region_set"
+values_from = "config.region_sets"
+
+[rules.resources]
+threads = 10
+
+[rules.environment]
+conda = "envs/pycisTarget.yaml"
+
+[[rules]]
+name = "process_results_pycisTarget"
+description = "Postprocess pycisTarget hdf5 results to CSV tables"
+input = ["{config.result_path}/{region_set}/pycisTarget/hg38_screen_v10clust/motif_enrichment_cistarget_{region_set}.hdf5"]
+output = [
+    "{config.result_path}/{region_set}/pycisTarget/hg38_screen_v10clust/{region_set}_hg38_screen_v10clust.csv",
+    "{config.result_path}/{region_set}/pycisTarget/hg38_screen_v10clust/{region_set}_hg38_screen_v10clust.motif_hits.csv",
+    "{config.result_path}/{region_set}/pycisTarget/hg38_screen_v10clust/{region_set}_hg38_screen_v10clust.cistromes.csv",
+]
+shell = "python scripts/process_results_pycisTarget.py {input[0]} {output[0]} {output[1]} {output[2]} {region_set} {config.pycistarget_term_col}"
+log = "logs/rules/process_results_pycisTarget_{region_set}_hg38_screen_v10clust.log"
+tags = ["pycisTarget", "motif-enrichment"]
+
+[rules.scatter]
+variable = "region_set"
+values_from = "config.region_sets"
+
+[rules.environment]
+conda = "envs/pycisTarget.yaml"

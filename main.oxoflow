@@ -1,0 +1,134 @@
+# oxo-flow port of epigen/enrichment_analysis v3.0.1
+# Default-parameters main execution path: region/gene set enrichment
+# (LOLA, GREAT, pycisTarget, GSEApy ORA + preranked), multiple-test
+# correction inside each tool, plots and per-group summaries.
+# See README.md for the fidelity table and this port's conventions.
+
+[workflow]
+name = "oxo-flow-enrichment"
+version = "3.0.1"
+description = "Genomic region set and gene set enrichment analysis (LOLA, GREAT, pycisTarget, GSEApy ORA, GSEApy preranked) with plots and group summaries"
+author = "oxo-flow-community"
+min_version = "0.11.0"
+
+[config]
+# --- resources (upstream config/config.yaml: mem 32000 MB, threads 1) ---
+# applied via [defaults] below
+
+# --- general ---
+annotation = "config/annotation.csv"
+result_path = "test/results/enrichment_analysis"
+project_name = "Corces_CellTypes"
+genome = "hg38"
+# upstream derives species from genome (hg19/hg38 -> homo_sapiens); ported as config key
+species = "homo_sapiens"
+
+# --- feature sets (derived from config/annotation.csv at port time) ---
+region_beds = "test/data/CorcesATAC"          # {region_set}.bed per entry of region_sets
+region_sets = ["Bcell_open_regions", "Ery_open_regions"]
+all_region_sets = ["Bcell_open_regions", "Ery_open_regions", "all_regions"]
+background_name = "all_regions"               # upstream annotation background_name (all region sets)
+rnk_dir = "test/data/CorcesRNA"               # {gene_set}.csv per entry of rnk_sets
+rnk_sets = ["Bcell_ranked", "Ery_ranked"]
+
+# --- databases (upstream local_databases / lola_databases) ---
+db_Azimuth_2023 = "test/resources/enrichment_analysis/Azimuth_2023.json"
+db_Reactome = "test/resources/enrichment_analysis/ReactomePathways.gmt"
+lola_db_LOLACore = "test/resources/LOLACore/hg38"
+pycistarget_db_hg38_screen_v10clust = "test/resources/enrichment_analysis/600regions_test.regions_vs_motifs.rankings.feather"
+path_to_motif_annotations = "test/resources/enrichment_analysis/89_motifs_test.tbl"
+
+# --- pycisTarget parameters (upstream pycistarget_parameters) ---
+pycistarget_fraction_overlap_w_cistarget_database = 0.4
+pycistarget_auc_threshold = 0.005
+pycistarget_nes_threshold = 3
+pycistarget_rank_threshold = 0.05
+pycistarget_annotation_version = "v10nr_clust"
+# upstream passes the python list literal; kept as a string so the rendered
+# command is byte-identical to upstream's
+pycistarget_annotations_to_use = "['Direct_annot', 'Motif_similarity_annot', 'Orthology_annot', 'Motif_similarity_and_Orthology_annot']"
+pycistarget_term_col = "Direct_annot"         # first entry of annotations_to_use
+pycistarget_motif_similarity_fdr = 0.001
+pycistarget_orthologous_identity_threshold = 0
+
+# --- GREAT parameters (upstream great_parameters) ---
+great_min_gene_set_size = 0
+great_mode = "basalPlusExt"
+great_basal_upstream = 5000
+great_basal_downstream = 1000
+great_extension = 1000000
+great_map_associated_regions = 1
+
+# --- tool-specific column names (upstream column_names) ---
+cn_ORA_GSEApy_top_n = 25
+cn_ORA_GSEApy_p_value = "P_value"
+cn_ORA_GSEApy_adj_pvalue = "Adjusted_P_value"
+cn_ORA_GSEApy_effect_size = "Odds_Ratio"
+cn_ORA_GSEApy_overlap = "Overlap"
+cn_ORA_GSEApy_term = "Term"
+cn_preranked_GSEApy_top_n = 25
+cn_preranked_GSEApy_p_value = "NOM_p_val"
+cn_preranked_GSEApy_adj_pvalue = "FDR_q_val"
+cn_preranked_GSEApy_effect_size = "NES"
+cn_preranked_GSEApy_overlap = "Tag"
+cn_preranked_GSEApy_term = "Term"
+cn_GREAT_top_n = 25
+cn_GREAT_p_value = "p_value_hyper"
+cn_GREAT_adj_pvalue = "p_adjust_hyper"
+cn_GREAT_effect_size = "fold_enrichment_hyper"
+cn_GREAT_overlap = "observed_region_hits"
+cn_GREAT_term = "description"
+cn_LOLA_top_n = 25
+cn_LOLA_p_value = "pValue"
+cn_LOLA_adj_pvalue = "qValue"
+cn_LOLA_effect_size = "oddsRatio"
+cn_LOLA_overlap = "support"
+cn_LOLA_term = "description"
+cn_pycisTarget_top_n = 25
+cn_pycisTarget_p_value = "AUC"
+cn_pycisTarget_adj_pvalue = "NES"
+cn_pycisTarget_effect_size = "NES"
+cn_pycisTarget_overlap = "Motif_hits"
+cn_pycisTarget_term = "description"
+
+# --- significance thresholds (upstream adjp_th) ---
+adjp_th_ORA_GSEApy = 0.05
+adjp_th_preranked_GSEApy = 0.05
+adjp_th_GREAT = 0.01
+adjp_th_LOLA = 0.01
+adjp_th_pycisTarget = 5
+
+# --- aggregate & summarize (upstream top_terms_n / adjp_cap / or_cap / nes_cap / cluster_summary) ---
+top_terms_n = 5
+adjp_cap = 4
+or_cap = 5
+nes_cap = 5
+cluster_summary = 1
+
+[defaults]
+threads = 1
+memory = "32000M"
+
+[[include]]
+path = "modules/databases.oxoflow"
+
+[[include]]
+path = "modules/region_enrichment.oxoflow"
+
+[[include]]
+path = "modules/motif_enrichment.oxoflow"
+
+[[include]]
+path = "modules/gene_enrichment.oxoflow"
+
+[[include]]
+path = "modules/plots.oxoflow"
+
+[[include]]
+path = "modules/aggregate.oxoflow"
+
+[[include]]
+path = "modules/visualize.oxoflow"
+
+[[include]]
+path = "modules/export.oxoflow"

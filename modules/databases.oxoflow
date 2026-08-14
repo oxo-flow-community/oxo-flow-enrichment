@@ -1,0 +1,33 @@
+# prepare_databases (upstream rule prepare_databases)
+# load, convert and save local provided GMT & JSON databases to the local
+# resource folder; one rule block per database (upstream fans out over the
+# database dict — this port bakes the default-path databases as static blocks)
+
+[workflow]
+name = "oxo-flow-enrichment-databases"
+version = "3.0.1"
+description = "Database preparation fragment (prepare_databases)"
+
+[[rules]]
+name = "prepare_databases_Azimuth_2023"
+description = "Convert the Azimuth_2023 JSON database to GMT"
+input = ["{config.db_Azimuth_2023}"]
+output = ["resources/{config.project_name}/enrichment_analysis/Azimuth_2023.gmt"]
+shell = "python scripts/prepare_databases_GSEApy.py {input[0]} {output[0]} Azimuth_2023"
+log = "logs/rules/prepare_databases_Azimuth_2023.log"
+tags = ["databases"]
+
+[rules.environment]
+conda = "envs/gene_enrichment_analysis.yaml"
+
+[[rules]]
+name = "prepare_databases_Reactome"
+description = "Copy the Reactome GMT database to the local resource folder"
+input = ["{config.db_Reactome}"]
+output = ["resources/{config.project_name}/enrichment_analysis/Reactome.gmt"]
+shell = "python scripts/prepare_databases_GSEApy.py {input[0]} {output[0]} Reactome"
+log = "logs/rules/prepare_databases_Reactome.log"
+tags = ["databases"]
+
+[rules.environment]
+conda = "envs/gene_enrichment_analysis.yaml"

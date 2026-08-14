@@ -1,0 +1,138 @@
+# Enrichment plots (upstream rule plot_enrichment_result).
+# One rule block per (tool, db); fan-out over feature sets (region sets for
+# region-based tools, ranked gene sets for preranked_GSEApy). Upstream also
+# plots RcisTarget results — zero gene-set instances on the default
+# annotation, so RcisTarget is not ported (see README fidelity table).
+
+[workflow]
+name = "oxo-flow-enrichment-plots"
+version = "3.0.1"
+description = "Per-feature-set enrichment plots fragment"
+
+[[rules]]
+name = "plot_enrichment_result_LOLA_LOLACore"
+description = "Enrichment plot of LOLA results (LOLACore)"
+input = ["{config.result_path}/{region_set}/LOLA/LOLACore/{region_set}_LOLACore.csv"]
+output = ["{config.result_path}/{region_set}/LOLA/LOLACore/{region_set}_LOLACore.png"]
+shell = "Rscript scripts/enrichment_plot.R {input[0]} {output[0]} LOLA LOLACore {region_set} scripts/utils.R {config.cn_LOLA_top_n} {config.cn_LOLA_p_value} {config.cn_LOLA_adj_pvalue} {config.cn_LOLA_effect_size} {config.cn_LOLA_overlap} {config.cn_LOLA_term}"
+log = "logs/rules/plot_enrichment_result_LOLA_{region_set}_LOLACore.log"
+tags = ["plots", "LOLA"]
+
+[rules.scatter]
+variable = "region_set"
+values_from = "config.region_sets"
+
+[rules.environment]
+conda = "envs/visualization.yaml"
+
+[[rules]]
+name = "plot_enrichment_result_GREAT_Azimuth_2023"
+description = "Enrichment plot of GREAT results (Azimuth_2023)"
+input = ["{config.result_path}/{region_set}/GREAT/Azimuth_2023/{region_set}_Azimuth_2023.csv"]
+output = ["{config.result_path}/{region_set}/GREAT/Azimuth_2023/{region_set}_Azimuth_2023.png"]
+shell = "Rscript scripts/enrichment_plot.R {input[0]} {output[0]} GREAT Azimuth_2023 {region_set} scripts/utils.R {config.cn_GREAT_top_n} {config.cn_GREAT_p_value} {config.cn_GREAT_adj_pvalue} {config.cn_GREAT_effect_size} {config.cn_GREAT_overlap} {config.cn_GREAT_term}"
+log = "logs/rules/plot_enrichment_result_GREAT_{region_set}_Azimuth_2023.log"
+tags = ["plots", "GREAT"]
+
+[rules.scatter]
+variable = "region_set"
+values_from = "config.region_sets"
+
+[rules.environment]
+conda = "envs/visualization.yaml"
+
+[[rules]]
+name = "plot_enrichment_result_GREAT_Reactome"
+description = "Enrichment plot of GREAT results (Reactome)"
+input = ["{config.result_path}/{region_set}/GREAT/Reactome/{region_set}_Reactome.csv"]
+output = ["{config.result_path}/{region_set}/GREAT/Reactome/{region_set}_Reactome.png"]
+shell = "Rscript scripts/enrichment_plot.R {input[0]} {output[0]} GREAT Reactome {region_set} scripts/utils.R {config.cn_GREAT_top_n} {config.cn_GREAT_p_value} {config.cn_GREAT_adj_pvalue} {config.cn_GREAT_effect_size} {config.cn_GREAT_overlap} {config.cn_GREAT_term}"
+log = "logs/rules/plot_enrichment_result_GREAT_{region_set}_Reactome.log"
+tags = ["plots", "GREAT"]
+
+[rules.scatter]
+variable = "region_set"
+values_from = "config.region_sets"
+
+[rules.environment]
+conda = "envs/visualization.yaml"
+
+[[rules]]
+name = "plot_enrichment_result_pycisTarget_hg38_screen_v10clust"
+description = "Enrichment plot of pycisTarget results (hg38_screen_v10clust)"
+input = ["{config.result_path}/{region_set}/pycisTarget/hg38_screen_v10clust/{region_set}_hg38_screen_v10clust.csv"]
+output = ["{config.result_path}/{region_set}/pycisTarget/hg38_screen_v10clust/{region_set}_hg38_screen_v10clust.png"]
+shell = "Rscript scripts/enrichment_plot.R {input[0]} {output[0]} pycisTarget hg38_screen_v10clust {region_set} scripts/utils.R {config.cn_pycisTarget_top_n} {config.cn_pycisTarget_p_value} {config.cn_pycisTarget_adj_pvalue} {config.cn_pycisTarget_effect_size} {config.cn_pycisTarget_overlap} {config.cn_pycisTarget_term}"
+log = "logs/rules/plot_enrichment_result_pycisTarget_{region_set}_hg38_screen_v10clust.log"
+tags = ["plots", "pycisTarget"]
+
+[rules.scatter]
+variable = "region_set"
+values_from = "config.region_sets"
+
+[rules.environment]
+conda = "envs/visualization.yaml"
+
+[[rules]]
+name = "plot_enrichment_result_ORA_GSEApy_Azimuth_2023"
+description = "Enrichment plot of ORA_GSEApy results (Azimuth_2023)"
+input = ["{config.result_path}/{region_set}/ORA_GSEApy/Azimuth_2023/{region_set}_Azimuth_2023.csv"]
+output = ["{config.result_path}/{region_set}/ORA_GSEApy/Azimuth_2023/{region_set}_Azimuth_2023.png"]
+shell = "Rscript scripts/enrichment_plot.R {input[0]} {output[0]} ORA_GSEApy Azimuth_2023 {region_set} scripts/utils.R {config.cn_ORA_GSEApy_top_n} {config.cn_ORA_GSEApy_p_value} {config.cn_ORA_GSEApy_adj_pvalue} {config.cn_ORA_GSEApy_effect_size} {config.cn_ORA_GSEApy_overlap} {config.cn_ORA_GSEApy_term}"
+log = "logs/rules/plot_enrichment_result_ORA_GSEApy_{region_set}_Azimuth_2023.log"
+tags = ["plots", "GSEApy", "ORA"]
+
+[rules.scatter]
+variable = "region_set"
+values_from = "config.region_sets"
+
+[rules.environment]
+conda = "envs/visualization.yaml"
+
+[[rules]]
+name = "plot_enrichment_result_ORA_GSEApy_Reactome"
+description = "Enrichment plot of ORA_GSEApy results (Reactome)"
+input = ["{config.result_path}/{region_set}/ORA_GSEApy/Reactome/{region_set}_Reactome.csv"]
+output = ["{config.result_path}/{region_set}/ORA_GSEApy/Reactome/{region_set}_Reactome.png"]
+shell = "Rscript scripts/enrichment_plot.R {input[0]} {output[0]} ORA_GSEApy Reactome {region_set} scripts/utils.R {config.cn_ORA_GSEApy_top_n} {config.cn_ORA_GSEApy_p_value} {config.cn_ORA_GSEApy_adj_pvalue} {config.cn_ORA_GSEApy_effect_size} {config.cn_ORA_GSEApy_overlap} {config.cn_ORA_GSEApy_term}"
+log = "logs/rules/plot_enrichment_result_ORA_GSEApy_{region_set}_Reactome.log"
+tags = ["plots", "GSEApy", "ORA"]
+
+[rules.scatter]
+variable = "region_set"
+values_from = "config.region_sets"
+
+[rules.environment]
+conda = "envs/visualization.yaml"
+
+[[rules]]
+name = "plot_enrichment_result_preranked_GSEApy_Azimuth_2023"
+description = "Enrichment plot of preranked_GSEApy results (Azimuth_2023)"
+input = ["{config.result_path}/{gene_set}/preranked_GSEApy/Azimuth_2023/{gene_set}_Azimuth_2023.csv"]
+output = ["{config.result_path}/{gene_set}/preranked_GSEApy/Azimuth_2023/{gene_set}_Azimuth_2023.png"]
+shell = "Rscript scripts/enrichment_plot.R {input[0]} {output[0]} preranked_GSEApy Azimuth_2023 {gene_set} scripts/utils.R {config.cn_preranked_GSEApy_top_n} {config.cn_preranked_GSEApy_p_value} {config.cn_preranked_GSEApy_adj_pvalue} {config.cn_preranked_GSEApy_effect_size} {config.cn_preranked_GSEApy_overlap} {config.cn_preranked_GSEApy_term}"
+log = "logs/rules/plot_enrichment_result_preranked_GSEApy_{gene_set}_Azimuth_2023.log"
+tags = ["plots", "GSEApy", "GSEA"]
+
+[rules.scatter]
+variable = "gene_set"
+values_from = "config.rnk_sets"
+
+[rules.environment]
+conda = "envs/visualization.yaml"
+
+[[rules]]
+name = "plot_enrichment_result_preranked_GSEApy_Reactome"
+description = "Enrichment plot of preranked_GSEApy results (Reactome)"
+input = ["{config.result_path}/{gene_set}/preranked_GSEApy/Reactome/{gene_set}_Reactome.csv"]
+output = ["{config.result_path}/{gene_set}/preranked_GSEApy/Reactome/{gene_set}_Reactome.png"]
+shell = "Rscript scripts/enrichment_plot.R {input[0]} {output[0]} preranked_GSEApy Reactome {gene_set} scripts/utils.R {config.cn_preranked_GSEApy_top_n} {config.cn_preranked_GSEApy_p_value} {config.cn_preranked_GSEApy_adj_pvalue} {config.cn_preranked_GSEApy_effect_size} {config.cn_preranked_GSEApy_overlap} {config.cn_preranked_GSEApy_term}"
+log = "logs/rules/plot_enrichment_result_preranked_GSEApy_{gene_set}_Reactome.log"
+tags = ["plots", "GSEApy", "GSEA"]
+
+[rules.scatter]
+variable = "gene_set"
+values_from = "config.rnk_sets"
+
+[rules.environment]
+conda = "envs/visualization.yaml"

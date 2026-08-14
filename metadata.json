@@ -1,0 +1,57 @@
+{
+  "name": "oxo-flow-enrichment",
+  "title": "epigen enrichment_analysis (port)",
+  "engine": "oxo-flow",
+  "source": {
+    "repo": "epigen/enrichment_analysis",
+    "url": "https://github.com/epigen/enrichment_analysis",
+    "tag": "v3.0.1",
+    "sha": "cd347fe1614985f30c8fa295aab94373890199dd",
+    "license": "MIT"
+  },
+  "created": "2026-08-15",
+  "domain": "genomics",
+  "tags": ["region-enrichment", "gene-set-enrichment", "LOLA", "GREAT", "pycisTarget", "GSEApy", "GSEA", "ORA", "snakemake"],
+  "description": "oxo-flow port of epigen/enrichment_analysis v3.0.1: region overlap enrichment (LOLA), genomic region enrichment of annotated terms (rGREAT), region TFBS motif enrichment (pycisTarget), gene over-representation analysis and preranked GSEA (GSEApy), with multiple-test correction inside each tool, per-set enrichment plots, per-group summary plots and reproducibility exports.",
+  "scope": [
+    "prepare_databases",
+    "region_enrichment_analysis_LOLA",
+    "region_enrichment_analysis_GREAT",
+    "region_gene_association_GREAT",
+    "region_motif_enrichment_analysis_pycisTarget",
+    "process_results_pycisTarget",
+    "gene_ORA_GSEApy",
+    "gene_preranked_GSEApy",
+    "plot_enrichment_result",
+    "aggregate",
+    "visualize",
+    "config_export",
+    "annot_export"
+  ],
+  "excluded": [
+    "gene_motif_enrichment_analysis_RcisTarget — zero instances on the default path: RcisTarget needs .txt gene sets in the annotation; the default annotation has none (region sets + ranked gene sets only)",
+    "env_export — conda env export requires the conda CLI inside the runtime environment; exact pins are already declared in envs/*.yaml",
+    "report rendering — oxo-flow has no report module; the reproducibility exports (configs/, envs) are kept as upstream rules",
+    "note: the anticipated names liftover/enrichr/gost/single_region_mode do not exist in v3.0.1 (Enrichr appears only as a database-source reference in config comments)"
+  ],
+  "rule_count": 38,
+  "tools": [
+    "gseapy@1.1.3",
+    "pandas@1.1.4",
+    "pycistarget@1.1",
+    "bioconductor-lola@1.32.0",
+    "bioconductor-rgreat@2.4.0",
+    "r-base@4.3.3",
+    "r-ggplot2@3.5.0",
+    "r-pheatmap@1.0.12",
+    "r-svglite@2.1.0",
+    "r-reshape2@1.4.4",
+    "r-data.table@1.15.2",
+    "bioconductor-rtracklayer@1.62.0",
+    "bioconductor-org.hs.eg.db@3.18.0"
+  ],
+  "status": "ready",
+  "repo_url": "https://github.com/oxo-flow-community/oxo-flow-enrichment",
+  "site_page": "https://oxo-flow-community.github.io/oxo-flow-enrichment/",
+  "upstream_license": "MIT"
+}

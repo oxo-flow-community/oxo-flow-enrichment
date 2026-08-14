@@ -1,0 +1,28 @@
+# Reproducibility exports (upstream rules config_export, annot_export).
+# Upstream env_export (conda env export per used environment) is not ported:
+# the conda CLI is not guaranteed to exist inside a conda-backend environment
+# and the playbook pins exact versions in envs/*.yaml already (see README
+# fidelity table).
+
+[workflow]
+name = "oxo-flow-enrichment-export"
+version = "3.0.1"
+description = "Reproducibility exports fragment"
+
+[[rules]]
+name = "config_export"
+description = "Copy the effective workflow configuration for reproducibility"
+input = ["config/config.yaml"]
+output = ["{config.result_path}/configs/{config.project_name}_config.yaml"]
+shell = "cp {input[0]} {output[0]}"
+log = "logs/rules/config_export.log"
+tags = ["export", "reproducibility"]
+
+[[rules]]
+name = "annot_export"
+description = "Copy the used annotation file for reproducibility"
+input = ["config/annotation.csv"]
+output = ["{config.result_path}/configs/{config.project_name}_annot.csv"]
+shell = "cp {input[0]} {output[0]}"
+log = "logs/rules/annot_export.log"
+tags = ["export", "reproducibility"]

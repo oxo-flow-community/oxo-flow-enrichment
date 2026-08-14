@@ -1,0 +1,5 @@
+name,features_path,background_name,background_path,group
+Bcell_open_regions,test/data/CorcesATAC/Bcell_open_regions.bed,all_regions,test/data/CorcesATAC/all_regions.bed,ATAC
+Ery_open_regions,test/data/CorcesATAC/Ery_open_regions.bed,all_regions,test/data/CorcesATAC/all_regions.bed,ATAC
+Bcell_ranked,test/data/CorcesRNA/Bcell_ranked.csv,"","",RNA
+Ery_ranked,test/data/CorcesRNA/Ery_ranked.csv,"","",RNA
