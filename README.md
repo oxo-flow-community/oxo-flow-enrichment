@@ -1,20 +1,98 @@
-# oxo-flow-enrichment
+# oxo-flow-enrichment — Region set and gene set enrichment: LOLA, GREAT, pycisTarget and GSEA
 
 [![CI](https://github.com/oxo-flow-community/oxo-flow-enrichment/actions/workflows/ci.yml/badge.svg)](https://github.com/oxo-flow-community/oxo-flow-enrichment/actions/workflows/ci.yml)
 [![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](LICENSE)
 
-Region set and gene set enrichment analysis: LOLA (region overlap),
-rGREAT (genomic region enrichment of annotated terms), pycisTarget (region
-TFBS motif enrichment), GSEApy over-representation analysis (ORA) and
-preranked GSEA — with multiple-test correction inside each tool, per-set
-enrichment plots, per-group summary plots, and reproducibility exports.
+> ★ Verified · ⇄ Official port of [`epigen/enrichment_analysis`](https://github.com/epigen/enrichment_analysis) @ `v3.0.1` — same tools, same versions, same commands. Part of the [oxo-flow-community catalog](https://oxo-flow-community.github.io/).
+
+Run a complete region set and gene set enrichment analysis on your own data:
+region overlap enrichment (LOLA), genomic region enrichment of annotated terms
+(rGREAT), region TFBS motif enrichment (pycisTarget), and gene
+over-representation analysis (ORA) and preranked GSEA (GSEApy). Every tool
+applies its own multiple-test correction; the workflow then produces per-set
+enrichment plots, per-group summary plots, and reproducibility exports
+(configs/ and envs/).
+
+## Installation
+
+### 1. Install oxo-flow
+
+Requires oxo-flow >= 0.11.0. The recommended way is the prebuilt release binary:
+
+```bash
+curl -fL -o oxo-flow.tar.gz \
+  https://github.com/Traitome/oxo-flow/releases/download/v0.11.0/oxo-flow-v0.11.0-x86_64-unknown-linux-gnu.tar.gz
+tar xzf oxo-flow.tar.gz && sudo mv oxo-flow /usr/local/bin/
+```
+
+Alternatively, conda users may `conda install -c bioconda oxo-flow-cli`
+(note: the bioconda package may lag behind releases). Other platform binaries
+are available on the [releases page](https://github.com/Traitome/oxo-flow/releases).
+
+### 2. Get this workflow
+
+```bash
+git clone https://github.com/oxo-flow-community/oxo-flow-enrichment.git
+cd oxo-flow-enrichment
+```
+
+### 3. Requirements
+
+**Reference data** — the workflow consumes feature sets, not raw sequencing
+reads. Point the `[config]` keys in `main.oxoflow` at your own data (the
+defaults ship pointing at the small test fixtures in `test/fixtures/`):
+
+- `config/annotation.csv` — declares each feature set (region set or ranked
+  gene set), its file path, background, and group;
+- region BED files, one per region set (e.g. `Bcell_open_regions.bed`), plus a
+  background BED (e.g. `all_regions.bed`);
+- ranked gene list CSVs, one per gene set (gene, score columns);
+- gene-set databases for GSEApy ORA — `db_Azimuth_2023` (JSON) and
+  `db_Reactome` (GMT);
+- a LOLA region database for the genome of interest (e.g. LOLACore hg38);
+- pycisTarget cisTarget rankings (`regions_vs_motifs.rankings.feather`) and a
+  motif annotation table (`path_to_motif_annotations`).
+
+**Compute** — up to 10 CPUs and 32 GB RAM per rule (defaults: 1 thread and
+32 GB per rule; the pycisTarget rule uses 10 threads as upstream). Set
+`-j` for parallelism across rules.
+
+**Tool delivery** — conda environments with pinned versions, exactly as
+upstream declares them: four environments (`gene_enrichment_analysis`,
+`pycisTarget`, `region_enrichment_analysis`, `visualization`) defined in
+`envs/*.yaml` and wired into `main.oxoflow`. You need conda or mamba at
+runtime (e.g. `conda activate` with the conda backend, or mamba). No
+containers are used.
+
+## Usage
+
+```bash
+# 1. install oxo-flow (see Requirements)
+# 2. prepare data (see test/fixtures/; region beds, ranked gene lists,
+#    databases, LOLA regionDB, pycisTarget context db + motif annotations)
+# 3. preview the plan
+oxo-flow dry-run main.oxoflow
+# 4. run
+oxo-flow run main.oxoflow -j 4
+# 5. run a subset
+oxo-flow run main.oxoflow -t aggregate_LOLA_LOLACore_ATAC
+```
+
+Configuration lives in the `[config]` section of `main.oxoflow`: input data
+paths, databases, pycisTarget/GREAT parameters, column-name mappings, and
+significance thresholds. Upstream nested dicts are flattened into prefixed
+top-level keys (see the Fidelity section below); `config/config.yaml` mirrors
+the effective configuration and is exported verbatim to the result directory
+by the `config_export` rule.
 
 ## Source
 
 Ported from **[epigen/enrichment_analysis](https://github.com/epigen/enrichment_analysis)**,
-version `v3.0.1` (MIT). This port is maintained independently and **may lag
-the upstream** — check the tag above and the fidelity table below for the
-exact ported state.
+version `v3.0.1` (MIT), commit `cd347fe1614985f30c8fa295aab94373890199dd`.
+Upstream license: MIT. Created 2026-08-15; this workflow may lag behind
+upstream releases — check the tag above and the fidelity table below for the
+exact ported state. Upstream attribution is retained in
+[NOTICE.md](NOTICE.md).
 
 ## Fidelity
 
@@ -47,41 +125,20 @@ caps) are flattened into prefixed top-level keys; the pycisTarget
 `annotations_to_use` list is carried as a python-list literal string so the
 rendered command is byte-identical to upstream.
 
-## Quickstart
+## Test
 
 ```bash
-# 1. install oxo-flow (see Requirements)
-# 2. prepare data (see test/fixtures/; region beds, ranked gene lists,
-#    databases, LOLA regionDB, pycisTarget context db + motif annotations)
-# 3. preview the plan
-oxo-flow dry-run main.oxoflow
-# 4. run
-oxo-flow run main.oxoflow -j 4
-# 5. run a subset
-oxo-flow run main.oxoflow -t aggregate_LOLA_LOLACore_ATAC
+bash test/run.sh
 ```
 
-## Requirements
-
-- **oxo-flow ≥ 0.11.0** — install the prebuilt binary:
-
-```bash
-curl -fL -o oxo-flow.tar.gz \
-  https://github.com/Traitome/oxo-flow/releases/download/v0.11.0/oxo-flow-v0.11.0-x86_64-unknown-linux-gnu.tar.gz
-tar xzf oxo-flow.tar.gz
-sudo mv oxo-flow /usr/local/bin/
-```
-
-- Conda users may alternatively `conda install -c bioconda oxo-flow-cli`
-  (note: the bioconda package currently lags the release binary at 0.10.2 —
-  some 0.11.0 format features may not validate).
-- Conda at runtime, per the environments declared in `main.oxoflow`
-  (`envs/*.yaml`, exact pins from upstream).
+Runs `validate` + `lint` + `dry-run` against the released oxo-flow engine
+(requires the `OXO` environment variable or `oxo-flow` on `PATH`).
 
 ## License
 
 Apache-2.0. Copyright (c) 2026 oxo-flow-community. Upstream attribution in
-[NOTICE.md](NOTICE.md).
+[NOTICE.md](NOTICE.md); upstream (epigen/enrichment_analysis, MIT) license in
+[LICENSE.upstream](LICENSE.upstream).
 
 ## Community
 

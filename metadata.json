@@ -1,7 +1,9 @@
 {
   "name": "oxo-flow-enrichment",
-  "title": "epigen enrichment_analysis (port)",
-  "engine": "oxo-flow",
+  "title": "Region set and gene set enrichment: LOLA, GREAT, pycisTarget and GSEA",
+  "origin": "port",
+  "rating": "verified",
+  "engine": "snakemake",
   "source": {
     "repo": "epigen/enrichment_analysis",
     "url": "https://github.com/epigen/enrichment_analysis",
@@ -12,7 +14,6 @@
   "created": "2026-08-15",
   "domain": "genomics",
   "tags": ["region-enrichment", "gene-set-enrichment", "LOLA", "GREAT", "pycisTarget", "GSEApy", "GSEA", "ORA", "snakemake"],
-  "description": "oxo-flow port of epigen/enrichment_analysis v3.0.1: region overlap enrichment (LOLA), genomic region enrichment of annotated terms (rGREAT), region TFBS motif enrichment (pycisTarget), gene over-representation analysis and preranked GSEA (GSEApy), with multiple-test correction inside each tool, per-set enrichment plots, per-group summary plots and reproducibility exports.",
   "scope": [
     "prepare_databases",
     "region_enrichment_analysis_LOLA",
@@ -36,22 +37,36 @@
   ],
   "rule_count": 38,
   "tools": [
-    "gseapy@1.1.3",
-    "pandas@1.1.4",
-    "pycistarget@1.1",
-    "bioconductor-lola@1.32.0",
-    "bioconductor-rgreat@2.4.0",
-    "r-base@4.3.3",
-    "r-ggplot2@3.5.0",
-    "r-pheatmap@1.0.12",
-    "r-svglite@2.1.0",
-    "r-reshape2@1.4.4",
-    "r-data.table@1.15.2",
-    "bioconductor-rtracklayer@1.62.0",
-    "bioconductor-org.hs.eg.db@3.18.0"
+    "gseapy",
+    "pandas",
+    "pycistarget",
+    "bioconductor-lola",
+    "bioconductor-rgreat",
+    "r-base",
+    "r-ggplot2",
+    "r-pheatmap",
+    "r-svglite",
+    "r-reshape2",
+    "r-data.table",
+    "bioconductor-rtracklayer",
+    "bioconductor-org.hs.eg.db"
   ],
-  "status": "ready",
+  "description": "Run a complete region set and gene set enrichment analysis on your own data: region overlap enrichment (LOLA), genomic region enrichment of annotated terms (rGREAT), region TFBS motif enrichment (pycisTarget), and gene over-representation analysis (ORA) and preranked GSEA (GSEApy). Every tool applies its own multiple-test correction; the workflow produces per-set enrichment plots, per-group summary plots, and reproducibility exports (configs/ and envs/). Official port of epigen/enrichment_analysis v3.0.1 with tool versions and commands pinned to the source.",
+  "installation": {
+    "engine": "oxo-flow >= 0.11.0",
+    "toolchain": "conda envs — pinned (conda/mamba at runtime; four environments declared in main.oxoflow, exact pins from upstream)",
+    "requirements": [
+      "annotation.csv declaring each feature set (region set or ranked gene set), its path, background, and group",
+      "region BED files, one per region set, plus a background BED (hg38)",
+      "ranked gene list CSVs, one per gene set (gene, score columns)",
+      "gene-set databases for GSEApy ORA: Azimuth_2023.json and ReactomePathways.gmt",
+      "LOLA region database for the genome of interest (e.g. LOLACore hg38)",
+      "pycisTarget cisTarget rankings (.feather) and motif annotation table",
+      "compute: up to 10 CPUs and 32 GB RAM per rule (defaults: 1 thread / 32 GB per rule; pycisTarget uses 10 threads as upstream)",
+      "disk: modest — enrichment tables, per-set plots, and pycisTarget HDF5 outputs (a few GB)"
+    ]
+  },
   "repo_url": "https://github.com/oxo-flow-community/oxo-flow-enrichment",
-  "site_page": "https://oxo-flow-community.github.io/oxo-flow-enrichment/",
+  "license": "Apache-2.0",
   "upstream_license": "MIT"
 }
