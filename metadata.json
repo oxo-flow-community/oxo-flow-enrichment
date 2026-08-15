@@ -53,7 +53,7 @@
   ],
   "description": "Run a complete region set and gene set enrichment analysis on your own data: region overlap enrichment (LOLA), genomic region enrichment of annotated terms (rGREAT), region TFBS motif enrichment (pycisTarget), and gene over-representation analysis (ORA) and preranked GSEA (GSEApy). Every tool applies its own multiple-test correction; the workflow produces per-set enrichment plots, per-group summary plots, and reproducibility exports (configs/ and envs/). Official port of epigen/enrichment_analysis v3.0.1 with tool versions and commands pinned to the source.",
   "installation": {
-    "engine": "oxo-flow >= 0.11.0",
+    "engine": "oxo-flow >= 0.12.0",
     "toolchain": "conda envs — pinned (conda/mamba at runtime; four environments declared in main.oxoflow, exact pins from upstream)",
     "requirements": [
       "annotation.csv declaring each feature set (region set or ranked gene set), its path, background, and group",
