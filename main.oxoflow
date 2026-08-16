@@ -35,8 +35,8 @@ rnk_sets = ["Bcell_ranked", "Ery_ranked"]
 db_Azimuth_2023 = "test/resources/enrichment_analysis/Azimuth_2023.json"
 db_Reactome = "test/resources/enrichment_analysis/ReactomePathways.gmt"
 lola_db_LOLACore = "test/resources/LOLACore/hg38"
-pycistarget_db_hg38_screen_v10clust = "test/resources/enrichment_analysis/600regions_test.regions_vs_motifs.rankings.feather"
-path_to_motif_annotations = "test/resources/enrichment_analysis/89_motifs_test.tbl"
+pycistarget_db_hg38_screen_v10clust = ""  # user-provided pycisTarget rankings DB; "" disables motif enrichment
+path_to_motif_annotations = ""             # user-provided motif annotation tbl; "" disables motif enrichment
 
 # --- pycisTarget parameters (upstream pycistarget_parameters) ---
 pycistarget_fraction_overlap_w_cistarget_database = 0.4

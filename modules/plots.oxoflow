@@ -60,6 +60,7 @@ conda = "envs/visualization.yaml"
 [[rules]]
 name = "plot_enrichment_result_pycisTarget_hg38_screen_v10clust"
 description = "Enrichment plot of pycisTarget results (hg38_screen_v10clust)"
+when = 'config.pycistarget_db_hg38_screen_v10clust != "" && config.path_to_motif_annotations != ""'
 input = ["{config.result_path}/{region_set}/pycisTarget/hg38_screen_v10clust/{region_set}_hg38_screen_v10clust.csv"]
 output = ["{config.result_path}/{region_set}/pycisTarget/hg38_screen_v10clust/{region_set}_hg38_screen_v10clust.png"]
 shell = "Rscript scripts/enrichment_plot.R {input[0]} {output[0]} pycisTarget hg38_screen_v10clust {region_set} scripts/utils.R {config.cn_pycisTarget_top_n} {config.cn_pycisTarget_p_value} {config.cn_pycisTarget_adj_pvalue} {config.cn_pycisTarget_effect_size} {config.cn_pycisTarget_overlap} {config.cn_pycisTarget_term}"

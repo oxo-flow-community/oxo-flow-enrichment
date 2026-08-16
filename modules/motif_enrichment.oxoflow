@@ -20,6 +20,7 @@ output = [
     "{config.result_path}/{region_set}/pycisTarget/hg38_screen_v10clust/motif_enrichment_cistarget_{region_set}.hdf5",
     "{config.result_path}/{region_set}/pycisTarget/hg38_screen_v10clust/motif_enrichment_cistarget_{region_set}.html",
 ]
+when = 'config.pycistarget_db_hg38_screen_v10clust != "" && config.path_to_motif_annotations != ""'
 shell = """
 {
     pycistarget cistarget \
@@ -59,6 +60,7 @@ conda = "envs/pycisTarget.yaml"
 [[rules]]
 name = "process_results_pycisTarget"
 description = "Postprocess pycisTarget hdf5 results to CSV tables"
+when = 'config.pycistarget_db_hg38_screen_v10clust != "" && config.path_to_motif_annotations != ""'
 input = ["{config.result_path}/{region_set}/pycisTarget/hg38_screen_v10clust/motif_enrichment_cistarget_{region_set}.hdf5"]
 output = [
     "{config.result_path}/{region_set}/pycisTarget/hg38_screen_v10clust/{region_set}_hg38_screen_v10clust.csv",

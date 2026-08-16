@@ -1,0 +1,28 @@
+{
+  "B_cell": [
+    "GENE1",
+    "GENE2",
+    "GENE3",
+    "GENE4",
+    "GENE5",
+    "GENE6"
+  ],
+  "CD4_T_cell": [
+    "GENE3",
+    "GENE4",
+    "GENE5",
+    "GENE6",
+    "GENE7",
+    "GENE8"
+  ],
+  "Monocyte": [
+    "GENE5",
+    "GENE6",
+    "GENE7",
+    "GENE8",
+    "GENE9",
+    "GENE10",
+    "GENE1",
+    "GENE2"
+  ]
+}
