@@ -208,7 +208,7 @@ make_summary_plot <- function(type = "topTerms"){
     # add a column for the terms
     effect_df$terms <- rownames(effect_df)
     # melt data frame for plotting
-    plot_df <- melt(data=effect_df,
+    plot_df <- reshape2::melt(data=effect_df,
                     id.vars="terms",
                     measure.vars=colnames(adjp_df),
                     variable.name = "feature_set",
