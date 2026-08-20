@@ -69,7 +69,17 @@ res <- great(gr = regionSet_query,
 
 # plot gene-region association
 pdf(file=file.path(associations_plot_path), width=12, height=4)
-plotRegionGeneAssociations(res)
+tryCatch(
+  plotRegionGeneAssociations(res),
+  error = function(e) {
+    # degenerate data (e.g. the tiny test fixtures) can make every
+    # binomial p-value zero, so rGREAT's barplot gets non-finite ylim
+    # ("need finite 'ylim' values"). The association table below is the
+    # real product — draw a note instead of failing the rule.
+    plot.new()
+    text(0.5, 0.5, paste("plot skipped:", conditionMessage(e)))
+  }
+)
 dev.off()
 
 # get and save gene-region association
