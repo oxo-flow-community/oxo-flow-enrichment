@@ -1,5 +1,3 @@
-2-LTR circle formation	R-HSA-164843	BANF1	HMGA1	LIG4	PSIP1	XRCC4	XRCC5	XRCC6	gag	gag-pol	rev	vif	vpr	vpu
-3-Methylcrotonyl-CoA carboxylase deficiency	R-HSA-9909438	MCCC1	MCCC2
-3-hydroxyisobutyryl-CoA hydrolase deficiency	R-HSA-9916722	HIBCH
-3-methylglutaconic aciduria	R-HSA-9914274	AUH
-5-Phosphoribose 1-diphosphate biosynthesis	R-HSA-73843	PRPS1	PRPS1L1	PRPS2
+Immune_System	na	CD19	CD79A	MS4A1	IGHM	PTPRC
+Signaling_by_EGFR	na	EGFR	GRB2	SOS1	HRAS	MAPK1
+Metabolism_of_Lipids	na	PPARG	LPL	APOE	FABP4	LEP

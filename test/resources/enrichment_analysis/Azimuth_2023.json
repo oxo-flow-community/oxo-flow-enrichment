@@ -1,28 +1,28 @@
 {
   "B_cell": [
-    "GENE1",
-    "GENE2",
-    "GENE3",
-    "GENE4",
-    "GENE5",
-    "GENE6"
+    "CD19",
+    "CD79A",
+    "MS4A1",
+    "CD79B",
+    "BLNK",
+    "PAX5"
   ],
   "CD4_T_cell": [
-    "GENE3",
-    "GENE4",
-    "GENE5",
-    "GENE6",
-    "GENE7",
-    "GENE8"
+    "CD3D",
+    "CD3E",
+    "CD4",
+    "IL7R",
+    "CCR7",
+    "LCK"
   ],
   "Monocyte": [
-    "GENE5",
-    "GENE6",
-    "GENE7",
-    "GENE8",
-    "GENE9",
-    "GENE10",
-    "GENE1",
-    "GENE2"
+    "CD14",
+    "LYZ",
+    "FCGR3A",
+    "S100A8",
+    "S100A9",
+    "CSF1R",
+    "CD68",
+    "ITGAM"
   ]
 }
