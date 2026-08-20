@@ -1,3 +1,0 @@
-Bcell_open_regions.bed.gz	Bcell_open_regions
-Ery_open_regions.bed.gz	Ery_open_regions
-all_regions.bed.gz	all_regions
