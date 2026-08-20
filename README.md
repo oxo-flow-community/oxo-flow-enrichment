@@ -40,18 +40,24 @@ cd oxo-flow-enrichment
 
 **Reference data** — the workflow consumes feature sets, not raw sequencing
 reads. Point the `[config]` keys in `main.oxoflow` at your own data (the
-defaults ship pointing at the small test fixtures in `test/fixtures/`):
+defaults ship pointing at the small test kit committed under `test/data/`
+and `test/resources/`, so `oxo-flow run main.oxoflow` works out of the box):
 
 - `config/annotation.csv` — declares each feature set (region set or ranked
   gene set), its file path, background, and group;
 - region BED files, one per region set (e.g. `Bcell_open_regions.bed`), plus a
-  background BED (e.g. `all_regions.bed`);
-- ranked gene list CSVs, one per gene set (gene, score columns);
+  background BED (e.g. `all_regions.bed`) — under `test/data/CorcesATAC/`;
+- ranked gene list CSVs, one per gene set (gene, score columns) — under
+  `test/data/CorcesRNA/`;
 - gene-set databases for GSEApy ORA — `db_Azimuth_2023` (JSON) and
-  `db_Reactome` (GMT);
-- a LOLA region database for the genome of interest (e.g. LOLACore hg38);
-- pycisTarget cisTarget rankings (`regions_vs_motifs.rankings.feather`) and a
-  motif annotation table (`path_to_motif_annotations`).
+  `db_Reactome` (GMT) — under `test/resources/enrichment_analysis/`;
+- a LOLA region database for the genome of interest (e.g. LOLACore hg38) —
+  under `test/resources/LOLACore/`;
+- **pycisTarget (user-provided)**: the cisTarget rankings feather
+  (`pycistarget_db_hg38_screen_v10clust`) and motif annotation table
+  (`path_to_motif_annotations`) are databases you supply, exactly as
+  upstream. Leave both empty (`""`, the default) and the four motif rules
+  are skipped; set both and they run.
 
 **Compute** — up to 10 CPUs and 32 GB RAM per rule (defaults: 1 thread and
 32 GB per rule; the pycisTarget rule uses 10 threads as upstream). Set
