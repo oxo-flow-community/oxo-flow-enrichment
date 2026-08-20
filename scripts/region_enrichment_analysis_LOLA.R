@@ -58,5 +58,9 @@ res$description <- make.names(res$description, unique=TRUE)
 # determine raw p-value
 res$pValue <- ('^'(10,-1*res[['pValueLog']]))
 
+# enrichment columns consumed downstream (upstream enrichment table contract)
+res$oddsRatio <- res$b / res$c
+res$qValue <- p.adjust(res$pValue, method = "BH")
+
 # save results
 fwrite(as.data.frame(res), file=file.path(result_path), row.names=FALSE)
