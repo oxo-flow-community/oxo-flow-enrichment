@@ -144,12 +144,12 @@ make_summary_plot <- function(type = "topTerms"){
     }
 
     # make adjusted p-vale and effect-size (odds-ratio or normalized enrichment scores) dataframes
-    adjp_df <- dcast(results_all, as.formula(paste(term_col, "~ name")), value.var = adjp_col)
+    adjp_df <- reshape2::dcast(results_all, as.formula(paste(term_col, "~ name")), value.var = adjp_col)
     rownames(adjp_df) <- adjp_df[[term_col]]
     adjp_df[[term_col]] <- NULL
     adjp_df <- adjp_df[,unique(results_all$name)]
 
-    effect_df <- dcast(results_all, as.formula(paste(term_col, "~ name")), value.var = effect_col)
+    effect_df <- reshape2::dcast(results_all, as.formula(paste(term_col, "~ name")), value.var = effect_col)
     rownames(effect_df) <- effect_df[[term_col]]
     effect_df[[term_col]] <- NULL
     effect_df <- effect_df[,unique(results_all$name)]
