@@ -10,6 +10,8 @@ dependencies:
   - bioconductor-genomeinfodbdata=1.2.11
   # LOLA reads .bed.gz via data.table::fread — needs R.utils (live: 'fread() requires R.utils')
   - r-r.utils
+  # rGREAT's loadNamespace needs GO.db (live: 'there is no package called GO.db')
+  - bioconductor-go.db=3.18.0
   - r-simplecache=0.4.2
   - bioconductor-qvalue=2.34.0
   - bioconductor-rgreat=2.4.0
