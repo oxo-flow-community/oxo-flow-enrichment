@@ -1,1 +1,2 @@
-Bcell_open_regions.bed.gz	Bcell_open_regions
+filename
+Bcell_open_regions.bed.gz

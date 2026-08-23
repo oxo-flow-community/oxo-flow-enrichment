@@ -1,1 +1,2 @@
-all_regions.bed.gz	all_regions
+filename
+all_regions.bed.gz
