@@ -19,6 +19,7 @@
     "LOLA",
     "GREAT",
     "pycisTarget",
+    "RcisTarget",
     "GSEApy",
     "GSEA",
     "ORA",
@@ -33,8 +34,10 @@
     "aggregate_preranked_GSEApy_Azimuth_2023_RNA",
     "aggregate_preranked_GSEApy_Reactome_RNA",
     "aggregate_pycisTarget_hg38_screen_v10clust_ATAC",
+    "aggregate_RcisTarget_hg38_500bp_up_100bp_down_v10clust_ATAC",
     "annot_export",
     "config_export",
+    "gene_motif_enrichment_analysis_RcisTarget",
     "gene_ORA_GSEApy_Azimuth_2023",
     "gene_ORA_GSEApy_Reactome",
     "gene_preranked_GSEApy_Azimuth_2023",
@@ -47,6 +50,7 @@
     "plot_enrichment_result_preranked_GSEApy_Azimuth_2023",
     "plot_enrichment_result_preranked_GSEApy_Reactome",
     "plot_enrichment_result_pycisTarget_hg38_screen_v10clust",
+    "plot_enrichment_result_RcisTarget_hg38_500bp_up_100bp_down_v10clust",
     "prepare_databases_Azimuth_2023",
     "prepare_databases_Reactome",
     "process_results_pycisTarget",
@@ -62,19 +66,21 @@
     "visualize_ORA_GSEApy_Reactome_ATAC",
     "visualize_preranked_GSEApy_Azimuth_2023_RNA",
     "visualize_preranked_GSEApy_Reactome_RNA",
-    "visualize_pycisTarget_hg38_screen_v10clust_ATAC"
+    "visualize_pycisTarget_hg38_screen_v10clust_ATAC",
+    "visualize_RcisTarget_hg38_500bp_up_100bp_down_v10clust_ATAC"
   ],
   "excluded": [
-    "gene_motif_enrichment_analysis_RcisTarget — zero instances on the default path: RcisTarget needs .txt gene sets in the annotation; the default annotation has none (region sets + ranked gene sets only)",
-    "env_export — conda env export requires the conda CLI inside the runtime environment; exact pins are already declared in envs/*.yaml",
-    "report rendering — oxo-flow has no report module; the reproducibility exports (configs/, envs) are kept as upstream rules",
-    "note: the anticipated names liftover/enrichr/gost/single_region_mode do not exist in v3.0.1 (Enrichr appears only as a database-source reference in config comments)"
+    "RcisTarget .txt gene-set fan-out — upstream also runs gene_motif_enrichment_analysis_RcisTarget over annotation rows ending in .txt (raw gene lists); the default annotation has none, so the port fans over region sets only (same convention as gene_ORA_GSEApy); the region-set path is ported, when-gated on the user-provided RcisTarget databases",
+    "env_export — conda env export requires the conda CLI inside the runtime environment and dumps the runtime env state, not the declared pins; exact pins are already declared in envs/*.yaml",
+    "report rendering — upstream wraps outputs in snakemake's report() (HTML report with .rst captions); oxo-flow has no report module, so only the reproducibility exports (configs/, envs) are ported as rules",
+    "note: the anticipated names liftover/enrichr/gost/single_region_mode do not exist in v3.0.1 (Enrichr appears only as a commented-out reference in gene_ORA_GSEApy.py and a database-source comment in config.yaml)"
   ],
-  "rule_count": 38,
+  "rule_count": 42,
   "tools": [
     "gseapy",
     "pandas",
     "pycistarget",
+    "bioconductor-rcistarget",
     "bioconductor-lola",
     "bioconductor-rgreat",
     "r-base",
@@ -86,10 +92,10 @@
     "bioconductor-rtracklayer",
     "bioconductor-org.hs.eg.db"
   ],
-  "description": "Run a complete region set and gene set enrichment analysis on your own data: region overlap enrichment (LOLA), genomic region enrichment of annotated terms (rGREAT), region TFBS motif enrichment (pycisTarget), and gene over-representation analysis (ORA) and preranked GSEA (GSEApy). Every tool applies its own multiple-test correction; the workflow produces per-set enrichment plots, per-group summary plots, and reproducibility exports (configs/ and envs/). Official port of epigen/enrichment_analysis v3.0.1 with tool versions and commands pinned to the source.",
+  "description": "Run a complete region set and gene set enrichment analysis on your own data: region overlap enrichment (LOLA), genomic region enrichment of annotated terms (rGREAT), region TFBS motif enrichment (pycisTarget), gene TFBS motif enrichment (RcisTarget), and gene over-representation analysis (ORA) and preranked GSEA (GSEApy). Every tool applies its own multiple-test correction; the workflow produces per-set enrichment plots, per-group summary plots, and reproducibility exports (configs/ and envs/). Official port of epigen/enrichment_analysis v3.0.1 with tool versions and commands pinned to the source.",
   "installation": {
     "engine": "oxo-flow >= 0.12.0",
-    "toolchain": "conda envs — pinned (conda/mamba at runtime; four environments declared in main.oxoflow, exact pins from upstream)",
+    "toolchain": "conda envs — pinned (conda/mamba at runtime; five environments declared in main.oxoflow, exact pins from upstream)",
     "requirements": [
       "annotation.csv declaring each feature set (region set or ranked gene set), its path, background, and group",
       "region BED files, one per region set, plus a background BED (hg38)",
@@ -97,6 +103,7 @@
       "gene-set databases for GSEApy ORA: Azimuth_2023.json and ReactomePathways.gmt",
       "LOLA region database for the genome of interest (e.g. LOLACore hg38)",
       "pycisTarget cisTarget rankings (.feather) and motif annotation table",
+      "RcisTarget gene-motif rankings (.feather) and motif-to-TF annotation table (optional; both empty by default)",
       "compute: up to 10 CPUs and 32 GB RAM per rule (defaults: 1 thread / 32 GB per rule; pycisTarget uses 10 threads as upstream)",
       "disk: modest — enrichment tables, per-set plots, and pycisTarget HDF5 outputs (a few GB)"
     ]

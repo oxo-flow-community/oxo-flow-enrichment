@@ -1,0 +1,13 @@
+name: RcisTarget
+channels:
+  - conda-forge
+  - bioconda
+  - nodefaults
+dependencies:
+  - bioconductor-rcistarget=1.20.0
+  # explicit upstream deps of the RcisTarget env; used by cisTarget's
+  # parallel/random-number machinery
+  - r-zoo=1.8_12
+  - r-domc=1.3.8
+  - r-dorng=1.8.6
+  - r-data.table=1.15.4

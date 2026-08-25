@@ -1,12 +1,20 @@
-# Region TFBS motif enrichment with pycisTarget (upstream rules:
-# region_motif_enrichment_analysis_pycisTarget, process_results_pycisTarget).
-# Command text is the upstream shell verbatim (incl. the upstream
-# error-tolerance wrapper that touches empty outputs and exits 0).
+# Motif enrichment analyses: region TFBS motifs with pycisTarget (upstream
+# rules: region_motif_enrichment_analysis_pycisTarget,
+# process_results_pycisTarget) and gene TFBS motifs with RcisTarget
+# (upstream rule: gene_motif_enrichment_analysis_RcisTarget).
+# The pycisTarget command text is the upstream shell verbatim (incl. the
+# upstream error-tolerance wrapper that touches empty outputs and exits 0).
+# Both branches are when-gated on user-provided databases, matching
+# upstream's "to skip you have to leave one database entry with an empty
+# path" convention; upstream fans RcisTarget over region sets (via the GREAT
+# genes.txt mapping) and over .txt gene sets — the default annotation has no
+# .txt gene sets, so the port fans over region sets only (same convention as
+# modules/gene_enrichment.oxoflow).
 
 [workflow]
 name = "oxo-flow-enrichment-motif-enrichment"
 version = "3.0.1"
-description = "Motif enrichment fragment (pycisTarget)"
+description = "Motif enrichment fragment (pycisTarget, RcisTarget)"
 
 [[rules]]
 name = "region_motif_enrichment_analysis_pycisTarget"
@@ -77,3 +85,25 @@ values_from = "config.region_sets"
 
 [rules.environment]
 conda = "envs/pycisTarget.yaml"
+
+[[rules]]
+name = "gene_motif_enrichment_analysis_RcisTarget"
+description = "Gene TFBS motif enrichment analysis with RcisTarget (hg38_500bp_up_100bp_down_v10clust database)"
+when = 'config.rcistarget_db_hg38_500bp_up_100bp_down_v10clust != "" && config.rcistarget_motif_annot != ""'
+input = [
+    "{config.result_path}/{region_set}/GREAT/genes.txt",
+    "{config.result_path}/{config.background_name}/GREAT/genes.txt",
+    "{config.rcistarget_db_hg38_500bp_up_100bp_down_v10clust}",
+    "{config.rcistarget_motif_annot}",
+]
+output = ["{config.result_path}/{region_set}/RcisTarget/hg38_500bp_up_100bp_down_v10clust/{region_set}_hg38_500bp_up_100bp_down_v10clust.csv"]
+shell = "Rscript scripts/gene_enrichment_analysis_RcisTarget.R {input[0]} {input[1]} {input[2]} {input[3]} {output[0]} {region_set} {config.rcistarget_motifAnnot_highConfCat} {config.rcistarget_motifAnnot_lowConfCat} {config.rcistarget_nesThreshold} {config.rcistarget_aucMaxRank_factor} {config.rcistarget_geneErnMethod} {config.rcistarget_geneErnMaxRank} {threads}"
+log = "logs/rules/gene_motif_enrichment_analysis_RcisTarget_{region_set}_hg38_500bp_up_100bp_down_v10clust.log"
+tags = ["RcisTarget", "motif-enrichment"]
+
+[rules.scatter]
+variable = "region_set"
+values_from = "config.region_sets"
+
+[rules.environment]
+conda = "envs/RcisTarget.yaml"

@@ -128,3 +128,19 @@ tags = ["visualize", "pycisTarget"]
 
 [rules.environment]
 conda = "envs/visualization.yaml"
+
+[[rules]]
+name = "visualize_RcisTarget_hg38_500bp_up_100bp_down_v10clust_ATAC"
+description = "Summary plots of aggregated RcisTarget results (ATAC group, hg38_500bp_up_100bp_down_v10clust)"
+when = 'config.rcistarget_db_hg38_500bp_up_100bp_down_v10clust != "" && config.rcistarget_motif_annot != ""'
+input = ["{config.result_path}/ATAC/RcisTarget/hg38_500bp_up_100bp_down_v10clust/ATAC_hg38_500bp_up_100bp_down_v10clust_all.csv"]
+output = [
+    "{config.result_path}/ATAC/RcisTarget/hg38_500bp_up_100bp_down_v10clust/ATAC_hg38_500bp_up_100bp_down_v10clust_summary_topTerms.png",
+    "{config.result_path}/ATAC/RcisTarget/hg38_500bp_up_100bp_down_v10clust/ATAC_hg38_500bp_up_100bp_down_v10clust_summary_specificTerms.png",
+]
+shell = "Rscript scripts/overview_plot.R {input[0]} {output[0]} {output[1]} RcisTarget hg38_500bp_up_100bp_down_v10clust ATAC scripts/utils.R {config.cn_RcisTarget_term} {config.cn_RcisTarget_adj_pvalue} {config.cn_RcisTarget_effect_size} {config.top_terms_n} {config.adjp_cap} {config.or_cap} {config.adjp_th_RcisTarget} {config.cluster_summary}"
+log = "logs/rules/visualize_RcisTarget_hg38_500bp_up_100bp_down_v10clust_ATAC.log"
+tags = ["visualize", "RcisTarget"]
+
+[rules.environment]
+conda = "envs/visualization.yaml"
