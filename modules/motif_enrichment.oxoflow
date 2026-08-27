@@ -61,6 +61,7 @@ values_from = "config.region_sets"
 
 [rules.resources]
 threads = 10
+memory = "32000M"   # upstream resources mem_mb=config["mem"] (32000)
 
 [rules.environment]
 conda = "envs/pycisTarget.yaml"
