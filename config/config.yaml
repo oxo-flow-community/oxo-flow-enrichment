@@ -27,8 +27,8 @@ rnk_sets:
 db_Azimuth_2023: test/resources/enrichment_analysis/Azimuth_2023.json
 db_Reactome: test/resources/enrichment_analysis/ReactomePathways.gmt
 lola_db_LOLACore: test/resources/LOLACore/hg38
-pycistarget_db_hg38_screen_v10clust: test/resources/enrichment_analysis/600regions_test.regions_vs_motifs.rankings.feather
-path_to_motif_annotations: test/resources/enrichment_analysis/89_motifs_test.tbl
+pycistarget_db_hg38_screen_v10clust: ""  # user-provided; "" disables motif enrichment (main.oxoflow default)
+path_to_motif_annotations: ""             # user-provided; "" disables motif enrichment (main.oxoflow default)
 pycistarget_fraction_overlap_w_cistarget_database: 0.4
 pycistarget_auc_threshold: 0.005
 pycistarget_nes_threshold: 3
@@ -38,8 +38,8 @@ pycistarget_annotations_to_use: "['Direct_annot', 'Motif_similarity_annot', 'Ort
 pycistarget_term_col: Direct_annot
 pycistarget_motif_similarity_fdr: 0.001
 pycistarget_orthologous_identity_threshold: 0
-rcistarget_db_hg38_500bp_up_100bp_down_v10clust: test/resources/enrichment_analysis/5000genes_test.genes_vs_motifs.rankings.feather
-rcistarget_motif_annot: test/resources/enrichment_analysis/89_motifs_test.tbl
+rcistarget_db_hg38_500bp_up_100bp_down_v10clust: ""  # user-provided; "" disables (main.oxoflow default)
+rcistarget_motif_annot: ""             # user-provided; "" disables (main.oxoflow default)
 rcistarget_motifAnnot_highConfCat: directAnnotation,inferredBy_Orthology
 rcistarget_motifAnnot_lowConfCat: inferredBy_MotifSimilarity,inferredBy_MotifSimilarity_n_Orthology
 rcistarget_nesThreshold: 3

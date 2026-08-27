@@ -7,11 +7,11 @@
 
 Run a complete region set and gene set enrichment analysis on your own data:
 region overlap enrichment (LOLA), genomic region enrichment of annotated terms
-(rGREAT), region TFBS motif enrichment (pycisTarget), and gene
-over-representation analysis (ORA) and preranked GSEA (GSEApy). Every tool
-applies its own multiple-test correction; the workflow then produces per-set
-enrichment plots, per-group summary plots, and reproducibility exports
-(configs/ and envs/).
+(rGREAT), region TFBS motif enrichment (pycisTarget), gene TFBS motif
+enrichment (RcisTarget), and gene over-representation analysis (ORA) and
+preranked GSEA (GSEApy). Every tool applies its own multiple-test correction;
+the workflow then produces per-set enrichment plots, per-group summary plots,
+and reproducibility exports (configs/ and envs/).
 
 ## Installation
 
@@ -56,13 +56,13 @@ and `test/resources/`, so `oxo-flow run main.oxoflow` works out of the box):
 - **pycisTarget (user-provided)**: the cisTarget rankings feather
   (`pycistarget_db_hg38_screen_v10clust`) and motif annotation table
   (`path_to_motif_annotations`) are databases you supply, exactly as
-  upstream. Leave both empty (`""`, the default) and the four motif rules
+  upstream. Leave both empty (`""`, the default) and the five motif rules
   are skipped; set both and they run.
 - **RcisTarget (user-provided)**: the gene-motif rankings feather
   (`rcistarget_db_hg38_500bp_up_100bp_down_v10clust`) and the motif-to-TF
   annotation table (`rcistarget_motif_annot`), exactly as upstream. Leave
-  both empty (`""`, the default) and the six RcisTarget rules (analysis,
-  plot, aggregate, summarize) are skipped; set both and they run on each
+  both empty (`""`, the default) and the four RcisTarget rules (analysis,
+  plot, aggregate, visualize) are skipped; set both and they run on each
   region set's mapped genes (`GREAT/genes.txt`).
 
 **Compute** — up to 10 CPUs and 32 GB RAM per rule (defaults: 1 thread and
@@ -119,13 +119,13 @@ exact ported state. Upstream attribution is retained in
 | gene_motif_enrichment_analysis_RcisTarget | `gene_motif_enrichment_analysis_RcisTarget` + plot/aggregate/visualize `*_RcisTarget_*` blocks | bioconductor-rcistarget 1.20.0 | identical command/logic; when-gated on the user-provided rankings feather + motif annotation (both `""` by default); upstream fans over region sets (via GREAT `genes.txt`) and `.txt` gene sets — the default annotation has no `.txt` gene sets, so the port fans over region sets only, same convention as `gene_ORA_GSEApy` |
 | gene_ORA_GSEApy | `gene_ORA_GSEApy_Azimuth_2023`, `gene_ORA_GSEApy_Reactome` | gseapy 1.1.3 | identical command; upstream genes_dict fan-out has zero default-path members, region-set fan-out kept |
 | gene_preranked_GSEApy | `gene_preranked_GSEApy_Azimuth_2023`, `gene_preranked_GSEApy_Reactome` | gseapy 1.1.3 | identical command |
-| plot_enrichment_result | `plot_enrichment_result_*` (8 blocks) | r-ggplot2 3.5.0, r-svglite 2.1.0 | identical command; upstream wildcard fan-out (tool × db × feature_set) baked as per-(tool,db) scatter blocks |
-| aggregate | `aggregate_*` (8 blocks) | pandas 1.1.4 / 1.5.3 | identical logic; upstream wildcards group/tool/db passed as CLI args |
-| visualize | `visualize_*` (8 blocks) | r-ggplot2 3.5.0, r-pheatmap 1.0.12 | identical command/logic; `cluster_summary` config key kept as upstream numeric flag |
+| plot_enrichment_result | `plot_enrichment_result_*` (9 blocks) | r-ggplot2 3.5.0, r-svglite 2.1.0 | identical command; upstream wildcard fan-out (tool × db × feature_set) baked as per-(tool,db) scatter blocks |
+| aggregate | `aggregate_*` (9 blocks) | pandas 1.1.4 / 1.5.3 | identical logic; upstream wildcards group/tool/db passed as CLI args |
+| visualize | `visualize_*` (9 blocks) | r-ggplot2 3.5.0, r-pheatmap 1.0.12 | identical command/logic; `cluster_summary` config key kept as upstream numeric flag |
 | config_export | `config_export` | — | upstream dumps the in-memory config dict; the port copies `config/config.yaml` (effective-config mirror) |
 | annot_export | `annot_export` | — | identical command |
 | env_export | not ported | — | `conda env export` needs the conda CLI inside the runtime env; exact pins are already declared in `envs/*.yaml` |
-| report rendering | not ported | — | oxo-flow has no report module; reproducibility exports (configs/, envs) are kept as upstream rules |
+| report rendering | not ported | — | oxo-flow has no report module; `config_export` / `annot_export` are ported as plain rules (`env_export` is excluded separately — see the row above) |
 
 Script ports: upstream scripts run inside snakemake's `snakemake@input/...`
 namespace; the port passes the same values as positional CLI arguments
