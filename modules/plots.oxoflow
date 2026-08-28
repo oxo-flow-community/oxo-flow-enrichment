@@ -1,10 +1,11 @@
 # Enrichment plots (upstream rule plot_enrichment_result).
 # One rule block per (tool, db); fan-out over feature sets (region sets for
 # region-based tools, ranked gene sets for preranked_GSEApy). Upstream plots
-# RcisTarget results over region sets and .txt gene sets; the port does the
-# same with two blocks — region sets (config.region_sets) and .txt gene sets
-# (config.txt_gene_sets, zero instances when the default-empty list is
-# unset) — both when-gated on the user-provided RcisTarget databases.
+# RcisTarget and ORA_GSEApy results over region sets and .txt gene sets; the
+# port does the same with twin blocks — region sets (config.region_sets) and
+# .txt gene sets (config.txt_gene_sets, zero instances when the
+# default-empty list is unset) — RcisTarget blocks when-gated on the
+# user-provided RcisTarget databases.
 
 [workflow]
 name = "oxo-flow-enrichment-plots"
@@ -127,6 +128,22 @@ values_from = "config.region_sets"
 conda = "envs/visualization.yaml"
 
 [[rules]]
+name = "plot_enrichment_result_ORA_GSEApy_Azimuth_2023_txt"
+description = "Enrichment plot of ORA_GSEApy results over .txt gene sets (Azimuth_2023)"
+input = ["{config.result_path}/{gene_set}/ORA_GSEApy/Azimuth_2023/{gene_set}_Azimuth_2023.csv"]
+output = ["{config.result_path}/{gene_set}/ORA_GSEApy/Azimuth_2023/{gene_set}_Azimuth_2023.png"]
+shell = "Rscript scripts/enrichment_plot.R {input[0]} {output[0]} ORA_GSEApy Azimuth_2023 {gene_set} scripts/utils.R {config.cn_ORA_GSEApy_top_n} {config.cn_ORA_GSEApy_p_value} {config.cn_ORA_GSEApy_adj_pvalue} {config.cn_ORA_GSEApy_effect_size} {config.cn_ORA_GSEApy_overlap} {config.cn_ORA_GSEApy_term}"
+log = "logs/rules/plot_enrichment_result_ORA_GSEApy_{gene_set}_Azimuth_2023.log"
+tags = ["plots", "GSEApy", "ORA"]
+
+[rules.scatter]
+variable = "gene_set"
+values_from = "config.txt_gene_sets"
+
+[rules.environment]
+conda = "envs/visualization.yaml"
+
+[[rules]]
 name = "plot_enrichment_result_ORA_GSEApy_Reactome"
 description = "Enrichment plot of ORA_GSEApy results (Reactome)"
 input = ["{config.result_path}/{region_set}/ORA_GSEApy/Reactome/{region_set}_Reactome.csv"]
@@ -138,6 +155,22 @@ tags = ["plots", "GSEApy", "ORA"]
 [rules.scatter]
 variable = "region_set"
 values_from = "config.region_sets"
+
+[rules.environment]
+conda = "envs/visualization.yaml"
+
+[[rules]]
+name = "plot_enrichment_result_ORA_GSEApy_Reactome_txt"
+description = "Enrichment plot of ORA_GSEApy results over .txt gene sets (Reactome)"
+input = ["{config.result_path}/{gene_set}/ORA_GSEApy/Reactome/{gene_set}_Reactome.csv"]
+output = ["{config.result_path}/{gene_set}/ORA_GSEApy/Reactome/{gene_set}_Reactome.png"]
+shell = "Rscript scripts/enrichment_plot.R {input[0]} {output[0]} ORA_GSEApy Reactome {gene_set} scripts/utils.R {config.cn_ORA_GSEApy_top_n} {config.cn_ORA_GSEApy_p_value} {config.cn_ORA_GSEApy_adj_pvalue} {config.cn_ORA_GSEApy_effect_size} {config.cn_ORA_GSEApy_overlap} {config.cn_ORA_GSEApy_term}"
+log = "logs/rules/plot_enrichment_result_ORA_GSEApy_{gene_set}_Reactome.log"
+tags = ["plots", "GSEApy", "ORA"]
+
+[rules.scatter]
+variable = "gene_set"
+values_from = "config.txt_gene_sets"
 
 [rules.environment]
 conda = "envs/visualization.yaml"
