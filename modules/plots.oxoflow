@@ -1,9 +1,10 @@
 # Enrichment plots (upstream rule plot_enrichment_result).
 # One rule block per (tool, db); fan-out over feature sets (region sets for
-# region-based tools, ranked gene sets for preranked_GSEApy). Upstream also
-# plots RcisTarget results over region sets and .txt gene sets — the default
-# annotation has no .txt gene sets, so the RcisTarget block fans over region
-# sets only and is when-gated on the user-provided RcisTarget databases.
+# region-based tools, ranked gene sets for preranked_GSEApy). Upstream plots
+# RcisTarget results over region sets and .txt gene sets; the port does the
+# same with two blocks — region sets (config.region_sets) and .txt gene sets
+# (config.txt_gene_sets, zero instances when the default-empty list is
+# unset) — both when-gated on the user-provided RcisTarget databases.
 
 [workflow]
 name = "oxo-flow-enrichment-plots"
@@ -88,6 +89,23 @@ tags = ["plots", "RcisTarget"]
 [rules.scatter]
 variable = "region_set"
 values_from = "config.region_sets"
+
+[rules.environment]
+conda = "envs/visualization.yaml"
+
+[[rules]]
+name = "plot_enrichment_result_RcisTarget_hg38_500bp_up_100bp_down_v10clust_txt"
+description = "Enrichment plot of RcisTarget results over .txt gene sets (hg38_500bp_up_100bp_down_v10clust)"
+when = 'config.rcistarget_db_hg38_500bp_up_100bp_down_v10clust != "" && config.rcistarget_motif_annot != ""'
+input = ["{config.result_path}/{gene_set}/RcisTarget/hg38_500bp_up_100bp_down_v10clust/{gene_set}_hg38_500bp_up_100bp_down_v10clust.csv"]
+output = ["{config.result_path}/{gene_set}/RcisTarget/hg38_500bp_up_100bp_down_v10clust/{gene_set}_hg38_500bp_up_100bp_down_v10clust.png"]
+shell = "Rscript scripts/enrichment_plot.R {input[0]} {output[0]} RcisTarget hg38_500bp_up_100bp_down_v10clust {gene_set} scripts/utils.R {config.cn_RcisTarget_top_n} {config.cn_RcisTarget_p_value} {config.cn_RcisTarget_adj_pvalue} {config.cn_RcisTarget_effect_size} {config.cn_RcisTarget_overlap} {config.cn_RcisTarget_term}"
+log = "logs/rules/plot_enrichment_result_RcisTarget_{gene_set}_hg38_500bp_up_100bp_down_v10clust.log"
+tags = ["plots", "RcisTarget"]
+
+[rules.scatter]
+variable = "gene_set"
+values_from = "config.txt_gene_sets"
 
 [rules.environment]
 conda = "envs/visualization.yaml"
