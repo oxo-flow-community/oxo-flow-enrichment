@@ -31,6 +31,16 @@ background_name = "all_regions"               # upstream annotation background_n
 rnk_dir = "test/data/CorcesRNA"               # {gene_set}.csv per entry of rnk_sets
 rnk_sets = ["Bcell_ranked", "Ery_ranked"]
 
+# --- txt gene sets (upstream annotation rows ending in .txt, genes_dict) ---
+# raw gene lists the RcisTarget rules also fan out over, exactly as upstream;
+# the default annotation has no .txt rows, so the keys default empty and the
+# txt fan-out produces no plan entries (default plan unchanged). The shared
+# background gene list follows the region-set convention (one background per
+# dimension; upstream's per-row background_path is not expressible).
+txt_gene_sets = []            # names of the .txt gene-set rows; {gene_set}.txt per entry
+txt_gene_set_dir = ""         # directory of the .txt gene lists and the shared background list
+txt_gene_set_background = ""  # name of the shared background gene list in txt_gene_set_dir
+
 # --- databases (upstream local_databases / lola_databases) ---
 db_Azimuth_2023 = "test/resources/enrichment_analysis/Azimuth_2023.json"
 db_Reactome = "test/resources/enrichment_analysis/ReactomePathways.gmt"

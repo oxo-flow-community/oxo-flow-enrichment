@@ -61,9 +61,13 @@ and `test/resources/`, so `oxo-flow run main.oxoflow` works out of the box):
 - **RcisTarget (user-provided)**: the gene-motif rankings feather
   (`rcistarget_db_hg38_500bp_up_100bp_down_v10clust`) and the motif-to-TF
   annotation table (`rcistarget_motif_annot`), exactly as upstream. Leave
-  both empty (`""`, the default) and the four RcisTarget rules (analysis,
-  plot, aggregate, visualize) are skipped; set both and they run on each
-  region set's mapped genes (`GREAT/genes.txt`).
+  both empty (`""`, the default) and the RcisTarget rules (analysis, plot,
+  aggregate, visualize) are skipped; set both and they run on each region
+  set's mapped genes (`GREAT/genes.txt`) and on every `.txt` gene set in
+  `config.txt_gene_sets` (raw gene lists, one gene per line, as upstream's
+  annotation rows ending in `.txt`): point `txt_gene_set_dir` at the
+  directory holding `{gene_set}.txt` files plus the shared background list
+  named by `txt_gene_set_background`.
 
 **Compute** — up to 10 CPUs and 32 GB RAM per rule (defaults: 1 thread and
 32 GB per rule; the pycisTarget rule uses 10 threads as upstream). Set
@@ -81,7 +85,8 @@ backend, or mamba). No containers are used.
 ```bash
 # 1. install oxo-flow (see Requirements)
 # 2. prepare data (see test/fixtures/; region beds, ranked gene lists,
-#    databases, LOLA regionDB, pycisTarget context db + motif annotations)
+#    databases, LOLA regionDB, pycisTarget context db + motif annotations,
+#    optional RcisTarget .txt gene sets + shared background gene list)
 # 3. preview the plan
 oxo-flow dry-run main.oxoflow
 # 4. run
@@ -116,7 +121,7 @@ exact ported state. Upstream attribution is retained in
 | region_gene_association_GREAT | `region_gene_association_GREAT` | bioconductor-rgreat 2.4.0 | identical command; uses the first database (Azimuth_2023) as upstream |
 | region_motif_enrichment_analysis_pycisTarget | `region_motif_enrichment_analysis_pycisTarget` | pycistarget 1.1 | command text verbatim (incl. upstream error-tolerance wrapper); threads=10 as upstream |
 | process_results_pycisTarget | `process_results_pycisTarget` | pycistarget 1.1 | identical command |
-| gene_motif_enrichment_analysis_RcisTarget | `gene_motif_enrichment_analysis_RcisTarget` + plot/aggregate/visualize `*_RcisTarget_*` blocks | bioconductor-rcistarget 1.20.0 | identical command/logic; when-gated on the user-provided rankings feather + motif annotation (both `""` by default); upstream fans over region sets (via GREAT `genes.txt`) and `.txt` gene sets — the default annotation has no `.txt` gene sets, so the port fans over region sets only, same convention as `gene_ORA_GSEApy` |
+| gene_motif_enrichment_analysis_RcisTarget | `gene_motif_enrichment_analysis_RcisTarget` (+ `_txt`) + plot/aggregate/visualize `*_RcisTarget_*` blocks | bioconductor-rcistarget 1.20.0 | identical command/logic; when-gated on the user-provided rankings feather + motif annotation (both `""` by default); fans over region sets (via GREAT `genes.txt`) and `.txt` gene sets (`config.txt_gene_sets`; zero instances when the default-empty list is unset, so the default plan is unchanged); upstream also folds the `.txt`-set results into the group aggregate/visualize — the port's static per-group blocks cannot enumerate user-defined gene sets, so txt-set results stop at per-set plots |
 | gene_ORA_GSEApy | `gene_ORA_GSEApy_Azimuth_2023`, `gene_ORA_GSEApy_Reactome` | gseapy 1.1.3 | identical command; upstream genes_dict fan-out has zero default-path members, region-set fan-out kept |
 | gene_preranked_GSEApy | `gene_preranked_GSEApy_Azimuth_2023`, `gene_preranked_GSEApy_Reactome` | gseapy 1.1.3 | identical command |
 | plot_enrichment_result | `plot_enrichment_result_*` (9 blocks) | r-ggplot2 3.5.0, r-svglite 2.1.0 | identical command; upstream wildcard fan-out (tool × db × feature_set) baked as per-(tool,db) scatter blocks |
