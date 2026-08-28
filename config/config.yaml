@@ -24,6 +24,9 @@ rnk_dir: test/data/CorcesRNA
 rnk_sets:
     - Bcell_ranked
     - Ery_ranked
+txt_gene_sets: []            # names of the .txt gene-set rows (main.oxoflow default: empty -> no txt instances)
+txt_gene_set_dir: ""         # directory of the .txt gene lists and the shared background list
+txt_gene_set_background: ""  # name of the shared background gene list in txt_gene_set_dir
 db_Azimuth_2023: test/resources/enrichment_analysis/Azimuth_2023.json
 db_Reactome: test/resources/enrichment_analysis/ReactomePathways.gmt
 lola_db_LOLACore: test/resources/LOLACore/hg38
