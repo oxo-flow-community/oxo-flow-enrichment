@@ -16,7 +16,10 @@ echo "==> dry-run with default config"
 grep -q "would execute" /tmp/oxo-dryrun-$$.txt
 
 echo "==> debug: expanded commands contain no literal placeholders"
+# WARN log lines are excluded: the ORA_GSEApy/RcisTarget aggregates carry an
+# intentional txt_gene_sets fan that contributes zero inputs on the default
+# config, and the engine's plan-time note for that quotes the raw pattern.
 "$OXO" debug main.oxoflow > /tmp/oxo-debug-$$.txt 2>&1
-grep -Eq '\{config\.|\{region_set\}|\{gene_set\}' /tmp/oxo-debug-$$.txt && { echo "unexpanded placeholders in debug output"; exit 1; } || true
+grep -v WARN /tmp/oxo-debug-$$.txt | grep -Eq '\{config\.|\{region_set\}|\{gene_set\}' && { echo "unexpanded placeholders in debug output"; exit 1; } || true
 
 echo "PASS"

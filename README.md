@@ -67,12 +67,14 @@ and `test/resources/`, so `oxo-flow run main.oxoflow` works out of the box):
   `config.txt_gene_sets` (raw gene lists, one gene per line, as upstream's
   annotation rows ending in `.txt`): point `txt_gene_set_dir` at the
   directory holding `{gene_set}.txt` files plus the shared background list
-  named by `txt_gene_set_background`.
+  named by `txt_gene_set_background`. As upstream, `.txt`-set RcisTarget
+  results also fold into the group aggregate and the visualize summaries.
 - **ORA .txt gene sets (user-provided, optional)**: the same `.txt` gene
   lists feed GSEApy ORA as upstream — with `txt_gene_sets` set, each
   `{gene_set}.txt` (plus the shared background list) also runs through
-  `gene_ORA_GSEApy_{Azimuth_2023,Reactome}_txt` and its per-set plot; unset
-  (empty default) and no extra instances are planned.
+  `gene_ORA_GSEApy_{Azimuth_2023,Reactome}_txt` and its per-set plot, and
+  the `.txt`-set results fold into the ORA group aggregates as upstream;
+  unset (empty default) and no extra instances are planned.
 
 **Compute** — up to 10 CPUs and 32 GB RAM per rule (defaults: 1 thread and
 32 GB per rule; the pycisTarget rule uses 10 threads as upstream). Set
@@ -126,11 +128,11 @@ exact ported state. Upstream attribution is retained in
 | region_gene_association_GREAT | `region_gene_association_GREAT` | bioconductor-rgreat 2.4.0 | identical command; uses the first database (Azimuth_2023) as upstream |
 | region_motif_enrichment_analysis_pycisTarget | `region_motif_enrichment_analysis_pycisTarget` | pycistarget 1.1 | command text verbatim (incl. upstream error-tolerance wrapper); threads=10 as upstream |
 | process_results_pycisTarget | `process_results_pycisTarget` | pycistarget 1.1 | identical command |
-| gene_motif_enrichment_analysis_RcisTarget | `gene_motif_enrichment_analysis_RcisTarget` (+ `_txt`) + plot/aggregate/visualize `*_RcisTarget_*` blocks | bioconductor-rcistarget 1.20.0 | identical command/logic; when-gated on the user-provided rankings feather + motif annotation (both `""` by default); fans over region sets (via GREAT `genes.txt`) and `.txt` gene sets (`config.txt_gene_sets`; zero instances when the default-empty list is unset, so the default plan is unchanged); upstream also folds the `.txt`-set results into the group aggregate/visualize — the port's static per-group blocks cannot enumerate user-defined gene sets, so txt-set results stop at per-set plots |
+| gene_motif_enrichment_analysis_RcisTarget | `gene_motif_enrichment_analysis_RcisTarget` (+ `_txt`) + plot/aggregate/visualize `*_RcisTarget_*` blocks | bioconductor-rcistarget 1.20.0 | identical command/logic; when-gated on the user-provided rankings feather + motif annotation (both `""` by default); fans over region sets (via GREAT `genes.txt`) and `.txt` gene sets (`config.txt_gene_sets`; zero instances when the default-empty list is unset, so the default plan is unchanged); the aggregate block gathers both region-set and `.txt`-set results (upstream `get_group_paths` union), so txt-set results reach the group visualize summaries |
 | gene_ORA_GSEApy | `gene_ORA_GSEApy_Azimuth_2023`, `gene_ORA_GSEApy_Reactome` (+ `_txt`) | gseapy 1.1.3 | identical command; fans over region sets (via GREAT `genes.txt`) and `.txt` gene sets (`config.txt_gene_sets`; zero instances when the default-empty list is unset, so the default plan is unchanged; shared background list follows the region-set convention) |
 | gene_preranked_GSEApy | `gene_preranked_GSEApy_Azimuth_2023`, `gene_preranked_GSEApy_Reactome` | gseapy 1.1.3 | identical command |
 | plot_enrichment_result | `plot_enrichment_result_*` (11 blocks) | r-ggplot2 3.5.0, r-svglite 2.1.0 | identical command; upstream wildcard fan-out (tool × db × feature_set) baked as per-(tool,db) scatter blocks |
-| aggregate | `aggregate_*` (9 blocks) | pandas 1.1.4 / 1.5.3 | identical logic; upstream wildcards group/tool/db passed as CLI args |
+| aggregate | `aggregate_*` (9 blocks) | pandas 1.1.4 / 1.5.3 | identical logic; upstream wildcards group/tool/db passed as CLI args; the ORA_GSEApy and RcisTarget blocks add a second `expand_inputs` fan over `config.txt_gene_sets` (upstream `get_group_paths` unions `.txt` gene sets into those aggregates; zero instances when the list is default-empty) |
 | visualize | `visualize_*` (9 blocks) | r-ggplot2 3.5.0, r-pheatmap 1.0.12 | identical command/logic; `cluster_summary` config key kept as upstream numeric flag |
 | config_export | `config_export` | — | upstream dumps the in-memory config dict; the port copies `config/config.yaml` (effective-config mirror) |
 | annot_export | `annot_export` | — | identical command |
