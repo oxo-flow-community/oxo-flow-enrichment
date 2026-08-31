@@ -3,6 +3,11 @@
 # path: region-set groups (ATAC) feed GREAT/LOLA/pycisTarget/ORA_GSEApy/
 # RcisTarget, ranked-set groups (RNA) feed preranked_GSEApy. The per-group
 # feature set list is gathered with expand_inputs (upstream get_group_paths).
+# For ORA_GSEApy and RcisTarget, upstream unions .txt gene sets into the
+# same aggregate (get_group_paths: genes_dict keys + regions_dict keys), so
+# those rules carry a second expand_inputs entry fanning over
+# config.txt_gene_sets; with the default-empty list it contributes zero
+# inputs (a warning only) and the default plan is unchanged.
 
 [workflow]
 name = "oxo-flow-enrichment-aggregate"
@@ -14,7 +19,8 @@ name = "aggregate_ORA_GSEApy_Azimuth_2023_ATAC"
 description = "Aggregate ORA_GSEApy results of the ATAC group (Azimuth_2023)"
 input = []
 expand_inputs = [
-    { pattern = "{config.result_path}/{region_set}/ORA_GSEApy/Azimuth_2023/{region_set}_Azimuth_2023.csv", variables = { region_set = "config.region_sets" } }
+    { pattern = "{config.result_path}/{region_set}/ORA_GSEApy/Azimuth_2023/{region_set}_Azimuth_2023.csv", variables = { region_set = "config.region_sets" } },
+    { pattern = "{config.result_path}/{gene_set}/ORA_GSEApy/Azimuth_2023/{gene_set}_Azimuth_2023.csv", variables = { gene_set = "config.txt_gene_sets" } }
 ]
 output = ["{config.result_path}/ATAC/ORA_GSEApy/Azimuth_2023/ATAC_Azimuth_2023_all.csv"]
 shell = "python scripts/aggregate.py {input} --out {output[0]} --group ATAC --tool ORA_GSEApy --db Azimuth_2023"
@@ -29,7 +35,8 @@ name = "aggregate_ORA_GSEApy_Reactome_ATAC"
 description = "Aggregate ORA_GSEApy results of the ATAC group (Reactome)"
 input = []
 expand_inputs = [
-    { pattern = "{config.result_path}/{region_set}/ORA_GSEApy/Reactome/{region_set}_Reactome.csv", variables = { region_set = "config.region_sets" } }
+    { pattern = "{config.result_path}/{region_set}/ORA_GSEApy/Reactome/{region_set}_Reactome.csv", variables = { region_set = "config.region_sets" } },
+    { pattern = "{config.result_path}/{gene_set}/ORA_GSEApy/Reactome/{gene_set}_Reactome.csv", variables = { gene_set = "config.txt_gene_sets" } }
 ]
 output = ["{config.result_path}/ATAC/ORA_GSEApy/Reactome/ATAC_Reactome_all.csv"]
 shell = "python scripts/aggregate.py {input} --out {output[0]} --group ATAC --tool ORA_GSEApy --db Reactome"
@@ -136,7 +143,8 @@ description = "Aggregate RcisTarget results of the ATAC group (hg38_500bp_up_100
 when = 'config.rcistarget_db_hg38_500bp_up_100bp_down_v10clust != "" && config.rcistarget_motif_annot != ""'
 input = []
 expand_inputs = [
-    { pattern = "{config.result_path}/{region_set}/RcisTarget/hg38_500bp_up_100bp_down_v10clust/{region_set}_hg38_500bp_up_100bp_down_v10clust.csv", variables = { region_set = "config.region_sets" } }
+    { pattern = "{config.result_path}/{region_set}/RcisTarget/hg38_500bp_up_100bp_down_v10clust/{region_set}_hg38_500bp_up_100bp_down_v10clust.csv", variables = { region_set = "config.region_sets" } },
+    { pattern = "{config.result_path}/{gene_set}/RcisTarget/hg38_500bp_up_100bp_down_v10clust/{gene_set}_hg38_500bp_up_100bp_down_v10clust.csv", variables = { gene_set = "config.txt_gene_sets" } }
 ]
 output = ["{config.result_path}/ATAC/RcisTarget/hg38_500bp_up_100bp_down_v10clust/ATAC_hg38_500bp_up_100bp_down_v10clust_all.csv"]
 shell = "python scripts/aggregate.py {input} --out {output[0]} --group ATAC --tool RcisTarget --db hg38_500bp_up_100bp_down_v10clust"
