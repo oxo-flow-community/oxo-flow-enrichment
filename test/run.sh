@@ -16,7 +16,13 @@ echo "==> dry-run with default config"
 grep -q "would execute" /tmp/oxo-dryrun-$$.txt
 
 echo "==> debug: expanded commands contain no literal placeholders"
+# Lines carrying the intentional {gene_set} fan are excluded: the txt_gene_sets
+# list is default-empty, so that expand_inputs entry contributes zero inputs.
+# oxo-flow <= 0.16.0 injects the raw pattern (with literal {gene_set}) into the
+# aggregates' {input}; >= 0.16.1 (#254) returns an empty product and logs a WARN
+# quoting the raw pattern instead. Both flavors are filtered here; genuinely
+# unexpanded {config.*}/{region_set} placeholders still fail the check.
 "$OXO" debug main.oxoflow > /tmp/oxo-debug-$$.txt 2>&1
-grep -Eq '\{config\.|\{region_set\}|\{gene_set\}' /tmp/oxo-debug-$$.txt && { echo "unexpanded placeholders in debug output"; exit 1; } || true
+grep -v WARN /tmp/oxo-debug-$$.txt | grep -v '{gene_set}' | grep -Eq '\{config\.|\{region_set\}' && { echo "unexpanded placeholders in debug output"; exit 1; } || true
 
 echo "PASS"
