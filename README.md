@@ -17,7 +17,10 @@ and reproducibility exports (configs/ and envs/).
 
 ### 1. Install oxo-flow
 
-Requires oxo-flow >= 0.12.0. The recommended way is the prebuilt release binary:
+Requires oxo-flow > 0.16.0 for the optional `.txt` gene-set features (they
+rely on the empty-product `expand_inputs` fix in 0.16.1+, [#254](https://github.com/Traitome/oxo-flow/pull/254));
+the default plan also runs on 0.16.0. The recommended way is the prebuilt
+release binary:
 
 ```bash
 curl -fL -o oxo-flow.tar.gz \
