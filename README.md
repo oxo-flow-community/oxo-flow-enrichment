@@ -19,7 +19,8 @@ and reproducibility exports (configs/ and envs/).
 
 Requires oxo-flow > 0.16.0 for the optional `.txt` gene-set features (they
 rely on the empty-product `expand_inputs` fix in 0.16.1+, [#254](https://github.com/Traitome/oxo-flow/pull/254));
-the default plan also runs on 0.16.0. The recommended way is the prebuilt
+the default plan also runs on 0.16.0. The `report` annotations require
+0.17.0+ (older engines ignore them). The recommended way is the prebuilt
 release binary:
 
 ```bash
@@ -140,7 +141,7 @@ exact ported state. Upstream attribution is retained in
 | config_export | `config_export` | — | upstream dumps the in-memory config dict; the port copies `config/config.yaml` (effective-config mirror) |
 | annot_export | `annot_export` | — | identical command |
 | env_export | not ported | — | `conda env export` needs the conda CLI inside the runtime env; exact pins are already declared in `envs/*.yaml` |
-| report rendering | not ported | — | oxo-flow has no report module; `config_export` / `annot_export` are ported as plain rules (`env_export` is excluded separately — see the row above) |
+| report rendering | `report` annotations (23 rules) | — | upstream's snakemake `report()` HTML book (figures embedded, categories/labels) has no oxo-flow equivalent; the caption half is ported as `report` annotations on all wrapped rules (needs oxo-flow 0.17.0+; rendered by the engine's rule-captions report section) — `env_export` stays unported (row above) |
 
 Script ports: upstream scripts run inside snakemake's `snakemake@input/...`
 namespace; the port passes the same values as positional CLI arguments

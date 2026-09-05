@@ -5,7 +5,9 @@
 # port does the same with twin blocks — region sets (config.region_sets) and
 # .txt gene sets (config.txt_gene_sets, zero instances when the
 # default-empty list is unset) — RcisTarget blocks when-gated on the
-# user-provided RcisTarget databases.
+# user-provided RcisTarget databases. Every rule carries the upstream
+# report() caption (workflow/report/enrichment_plot.rst) via the `report`
+# annotation, with the wildcards filled in from the block's static tool/db.
 
 [workflow]
 name = "oxo-flow-enrichment-plots"
@@ -20,6 +22,7 @@ output = ["{config.result_path}/{region_set}/LOLA/LOLACore/{region_set}_LOLACore
 shell = "Rscript scripts/enrichment_plot.R {input[0]} {output[0]} LOLA LOLACore {region_set} scripts/utils.R {config.cn_LOLA_top_n} {config.cn_LOLA_p_value} {config.cn_LOLA_adj_pvalue} {config.cn_LOLA_effect_size} {config.cn_LOLA_overlap} {config.cn_LOLA_term}"
 log = "logs/rules/plot_enrichment_result_LOLA_{region_set}_LOLACore.log"
 tags = ["plots", "LOLA"]
+report = "Top enrichment analysis results of the feature set in database LOLACore using LOLA."
 
 [rules.scatter]
 variable = "region_set"
@@ -36,6 +39,7 @@ output = ["{config.result_path}/{region_set}/GREAT/Azimuth_2023/{region_set}_Azi
 shell = "Rscript scripts/enrichment_plot.R {input[0]} {output[0]} GREAT Azimuth_2023 {region_set} scripts/utils.R {config.cn_GREAT_top_n} {config.cn_GREAT_p_value} {config.cn_GREAT_adj_pvalue} {config.cn_GREAT_effect_size} {config.cn_GREAT_overlap} {config.cn_GREAT_term}"
 log = "logs/rules/plot_enrichment_result_GREAT_{region_set}_Azimuth_2023.log"
 tags = ["plots", "GREAT"]
+report = "Top enrichment analysis results of the feature set in database Azimuth_2023 using GREAT."
 
 [rules.scatter]
 variable = "region_set"
@@ -52,6 +56,7 @@ output = ["{config.result_path}/{region_set}/GREAT/Reactome/{region_set}_Reactom
 shell = "Rscript scripts/enrichment_plot.R {input[0]} {output[0]} GREAT Reactome {region_set} scripts/utils.R {config.cn_GREAT_top_n} {config.cn_GREAT_p_value} {config.cn_GREAT_adj_pvalue} {config.cn_GREAT_effect_size} {config.cn_GREAT_overlap} {config.cn_GREAT_term}"
 log = "logs/rules/plot_enrichment_result_GREAT_{region_set}_Reactome.log"
 tags = ["plots", "GREAT"]
+report = "Top enrichment analysis results of the feature set in database Reactome using GREAT."
 
 [rules.scatter]
 variable = "region_set"
@@ -69,6 +74,7 @@ output = ["{config.result_path}/{region_set}/pycisTarget/hg38_screen_v10clust/{r
 shell = "Rscript scripts/enrichment_plot.R {input[0]} {output[0]} pycisTarget hg38_screen_v10clust {region_set} scripts/utils.R {config.cn_pycisTarget_top_n} {config.cn_pycisTarget_p_value} {config.cn_pycisTarget_adj_pvalue} {config.cn_pycisTarget_effect_size} {config.cn_pycisTarget_overlap} {config.cn_pycisTarget_term}"
 log = "logs/rules/plot_enrichment_result_pycisTarget_{region_set}_hg38_screen_v10clust.log"
 tags = ["plots", "pycisTarget"]
+report = "Top enrichment analysis results of the feature set in database hg38_screen_v10clust using pycisTarget."
 
 [rules.scatter]
 variable = "region_set"
@@ -86,6 +92,7 @@ output = ["{config.result_path}/{region_set}/RcisTarget/hg38_500bp_up_100bp_down
 shell = "Rscript scripts/enrichment_plot.R {input[0]} {output[0]} RcisTarget hg38_500bp_up_100bp_down_v10clust {region_set} scripts/utils.R {config.cn_RcisTarget_top_n} {config.cn_RcisTarget_p_value} {config.cn_RcisTarget_adj_pvalue} {config.cn_RcisTarget_effect_size} {config.cn_RcisTarget_overlap} {config.cn_RcisTarget_term}"
 log = "logs/rules/plot_enrichment_result_RcisTarget_{region_set}_hg38_500bp_up_100bp_down_v10clust.log"
 tags = ["plots", "RcisTarget"]
+report = "Top enrichment analysis results of the feature set in database hg38_500bp_up_100bp_down_v10clust using RcisTarget."
 
 [rules.scatter]
 variable = "region_set"
@@ -103,6 +110,7 @@ output = ["{config.result_path}/{gene_set}/RcisTarget/hg38_500bp_up_100bp_down_v
 shell = "Rscript scripts/enrichment_plot.R {input[0]} {output[0]} RcisTarget hg38_500bp_up_100bp_down_v10clust {gene_set} scripts/utils.R {config.cn_RcisTarget_top_n} {config.cn_RcisTarget_p_value} {config.cn_RcisTarget_adj_pvalue} {config.cn_RcisTarget_effect_size} {config.cn_RcisTarget_overlap} {config.cn_RcisTarget_term}"
 log = "logs/rules/plot_enrichment_result_RcisTarget_{gene_set}_hg38_500bp_up_100bp_down_v10clust.log"
 tags = ["plots", "RcisTarget"]
+report = "Top enrichment analysis results of the feature set in database hg38_500bp_up_100bp_down_v10clust using RcisTarget (.txt gene sets)."
 
 [rules.scatter]
 variable = "gene_set"
@@ -119,6 +127,7 @@ output = ["{config.result_path}/{region_set}/ORA_GSEApy/Azimuth_2023/{region_set
 shell = "Rscript scripts/enrichment_plot.R {input[0]} {output[0]} ORA_GSEApy Azimuth_2023 {region_set} scripts/utils.R {config.cn_ORA_GSEApy_top_n} {config.cn_ORA_GSEApy_p_value} {config.cn_ORA_GSEApy_adj_pvalue} {config.cn_ORA_GSEApy_effect_size} {config.cn_ORA_GSEApy_overlap} {config.cn_ORA_GSEApy_term}"
 log = "logs/rules/plot_enrichment_result_ORA_GSEApy_{region_set}_Azimuth_2023.log"
 tags = ["plots", "GSEApy", "ORA"]
+report = "Top enrichment analysis results of the feature set in database Azimuth_2023 using ORA_GSEApy."
 
 [rules.scatter]
 variable = "region_set"
@@ -135,6 +144,7 @@ output = ["{config.result_path}/{gene_set}/ORA_GSEApy/Azimuth_2023/{gene_set}_Az
 shell = "Rscript scripts/enrichment_plot.R {input[0]} {output[0]} ORA_GSEApy Azimuth_2023 {gene_set} scripts/utils.R {config.cn_ORA_GSEApy_top_n} {config.cn_ORA_GSEApy_p_value} {config.cn_ORA_GSEApy_adj_pvalue} {config.cn_ORA_GSEApy_effect_size} {config.cn_ORA_GSEApy_overlap} {config.cn_ORA_GSEApy_term}"
 log = "logs/rules/plot_enrichment_result_ORA_GSEApy_{gene_set}_Azimuth_2023.log"
 tags = ["plots", "GSEApy", "ORA"]
+report = "Top enrichment analysis results of the feature set in database Azimuth_2023 using ORA_GSEApy (.txt gene sets)."
 
 [rules.scatter]
 variable = "gene_set"
@@ -151,6 +161,7 @@ output = ["{config.result_path}/{region_set}/ORA_GSEApy/Reactome/{region_set}_Re
 shell = "Rscript scripts/enrichment_plot.R {input[0]} {output[0]} ORA_GSEApy Reactome {region_set} scripts/utils.R {config.cn_ORA_GSEApy_top_n} {config.cn_ORA_GSEApy_p_value} {config.cn_ORA_GSEApy_adj_pvalue} {config.cn_ORA_GSEApy_effect_size} {config.cn_ORA_GSEApy_overlap} {config.cn_ORA_GSEApy_term}"
 log = "logs/rules/plot_enrichment_result_ORA_GSEApy_{region_set}_Reactome.log"
 tags = ["plots", "GSEApy", "ORA"]
+report = "Top enrichment analysis results of the feature set in database Reactome using ORA_GSEApy."
 
 [rules.scatter]
 variable = "region_set"
@@ -167,6 +178,7 @@ output = ["{config.result_path}/{gene_set}/ORA_GSEApy/Reactome/{gene_set}_Reacto
 shell = "Rscript scripts/enrichment_plot.R {input[0]} {output[0]} ORA_GSEApy Reactome {gene_set} scripts/utils.R {config.cn_ORA_GSEApy_top_n} {config.cn_ORA_GSEApy_p_value} {config.cn_ORA_GSEApy_adj_pvalue} {config.cn_ORA_GSEApy_effect_size} {config.cn_ORA_GSEApy_overlap} {config.cn_ORA_GSEApy_term}"
 log = "logs/rules/plot_enrichment_result_ORA_GSEApy_{gene_set}_Reactome.log"
 tags = ["plots", "GSEApy", "ORA"]
+report = "Top enrichment analysis results of the feature set in database Reactome using ORA_GSEApy (.txt gene sets)."
 
 [rules.scatter]
 variable = "gene_set"
@@ -183,6 +195,7 @@ output = ["{config.result_path}/{gene_set}/preranked_GSEApy/Azimuth_2023/{gene_s
 shell = "Rscript scripts/enrichment_plot.R {input[0]} {output[0]} preranked_GSEApy Azimuth_2023 {gene_set} scripts/utils.R {config.cn_preranked_GSEApy_top_n} {config.cn_preranked_GSEApy_p_value} {config.cn_preranked_GSEApy_adj_pvalue} {config.cn_preranked_GSEApy_effect_size} {config.cn_preranked_GSEApy_overlap} {config.cn_preranked_GSEApy_term}"
 log = "logs/rules/plot_enrichment_result_preranked_GSEApy_{gene_set}_Azimuth_2023.log"
 tags = ["plots", "GSEApy", "GSEA"]
+report = "Top enrichment analysis results of the feature set in database Azimuth_2023 using preranked_GSEApy."
 
 [rules.scatter]
 variable = "gene_set"
@@ -199,6 +212,7 @@ output = ["{config.result_path}/{gene_set}/preranked_GSEApy/Reactome/{gene_set}_
 shell = "Rscript scripts/enrichment_plot.R {input[0]} {output[0]} preranked_GSEApy Reactome {gene_set} scripts/utils.R {config.cn_preranked_GSEApy_top_n} {config.cn_preranked_GSEApy_p_value} {config.cn_preranked_GSEApy_adj_pvalue} {config.cn_preranked_GSEApy_effect_size} {config.cn_preranked_GSEApy_overlap} {config.cn_preranked_GSEApy_term}"
 log = "logs/rules/plot_enrichment_result_preranked_GSEApy_{gene_set}_Reactome.log"
 tags = ["plots", "GSEApy", "GSEA"]
+report = "Top enrichment analysis results of the feature set in database Reactome using preranked_GSEApy."
 
 [rules.scatter]
 variable = "gene_set"
