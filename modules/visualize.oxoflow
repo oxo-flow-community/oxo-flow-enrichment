@@ -1,7 +1,10 @@
 # Summary plots per group (upstream rule visualize).
 # One rule block per (group, tool, db) combination present on the default
 # path (mirrors modules/aggregate.oxoflow); each produces the topTerms and
-# specificTerms summary plots.
+# specificTerms summary plots. Each rule carries the upstream report()
+# captions (workflow/report/summary_plot_{topTerms,specificTerms}.rst) via
+# the `report` annotation, combined into one sentence per block since the
+# annotation is per-rule.
 
 [workflow]
 name = "oxo-flow-enrichment-visualize"
@@ -19,6 +22,7 @@ output = [
 shell = "Rscript scripts/overview_plot.R {input[0]} {output[0]} {output[1]} ORA_GSEApy Azimuth_2023 ATAC scripts/utils.R {config.cn_ORA_GSEApy_term} {config.cn_ORA_GSEApy_adj_pvalue} {config.cn_ORA_GSEApy_effect_size} {config.top_terms_n} {config.adjp_cap} {config.or_cap} {config.adjp_th_ORA_GSEApy} {config.cluster_summary}"
 log = "logs/rules/visualize_ORA_GSEApy_Azimuth_2023_ATAC.log"
 tags = ["visualize", "GSEApy", "ORA"]
+report = "Summary of the top and most specific enrichment analysis results of group ATAC in database Azimuth_2023 using ORA_GSEApy."
 
 [rules.environment]
 conda = "envs/visualization.yaml"
@@ -34,6 +38,7 @@ output = [
 shell = "Rscript scripts/overview_plot.R {input[0]} {output[0]} {output[1]} ORA_GSEApy Reactome ATAC scripts/utils.R {config.cn_ORA_GSEApy_term} {config.cn_ORA_GSEApy_adj_pvalue} {config.cn_ORA_GSEApy_effect_size} {config.top_terms_n} {config.adjp_cap} {config.or_cap} {config.adjp_th_ORA_GSEApy} {config.cluster_summary}"
 log = "logs/rules/visualize_ORA_GSEApy_Reactome_ATAC.log"
 tags = ["visualize", "GSEApy", "ORA"]
+report = "Summary of the top and most specific enrichment analysis results of group ATAC in database Reactome using ORA_GSEApy."
 
 [rules.environment]
 conda = "envs/visualization.yaml"
@@ -49,6 +54,7 @@ output = [
 shell = "Rscript scripts/overview_plot.R {input[0]} {output[0]} {output[1]} preranked_GSEApy Azimuth_2023 RNA scripts/utils.R {config.cn_preranked_GSEApy_term} {config.cn_preranked_GSEApy_adj_pvalue} {config.cn_preranked_GSEApy_effect_size} {config.top_terms_n} {config.adjp_cap} {config.nes_cap} {config.adjp_th_preranked_GSEApy} {config.cluster_summary}"
 log = "logs/rules/visualize_preranked_GSEApy_Azimuth_2023_RNA.log"
 tags = ["visualize", "GSEApy", "GSEA"]
+report = "Summary of the top and most specific enrichment analysis results of group RNA in database Azimuth_2023 using preranked_GSEApy."
 
 [rules.environment]
 conda = "envs/visualization.yaml"
@@ -64,6 +70,7 @@ output = [
 shell = "Rscript scripts/overview_plot.R {input[0]} {output[0]} {output[1]} preranked_GSEApy Reactome RNA scripts/utils.R {config.cn_preranked_GSEApy_term} {config.cn_preranked_GSEApy_adj_pvalue} {config.cn_preranked_GSEApy_effect_size} {config.top_terms_n} {config.adjp_cap} {config.nes_cap} {config.adjp_th_preranked_GSEApy} {config.cluster_summary}"
 log = "logs/rules/visualize_preranked_GSEApy_Reactome_RNA.log"
 tags = ["visualize", "GSEApy", "GSEA"]
+report = "Summary of the top and most specific enrichment analysis results of group RNA in database Reactome using preranked_GSEApy."
 
 [rules.environment]
 conda = "envs/visualization.yaml"
@@ -79,6 +86,7 @@ output = [
 shell = "Rscript scripts/overview_plot.R {input[0]} {output[0]} {output[1]} GREAT Azimuth_2023 ATAC scripts/utils.R {config.cn_GREAT_term} {config.cn_GREAT_adj_pvalue} {config.cn_GREAT_effect_size} {config.top_terms_n} {config.adjp_cap} {config.or_cap} {config.adjp_th_GREAT} {config.cluster_summary}"
 log = "logs/rules/visualize_GREAT_Azimuth_2023_ATAC.log"
 tags = ["visualize", "GREAT"]
+report = "Summary of the top and most specific enrichment analysis results of group ATAC in database Azimuth_2023 using GREAT."
 
 [rules.environment]
 conda = "envs/visualization.yaml"
@@ -94,6 +102,7 @@ output = [
 shell = "Rscript scripts/overview_plot.R {input[0]} {output[0]} {output[1]} GREAT Reactome ATAC scripts/utils.R {config.cn_GREAT_term} {config.cn_GREAT_adj_pvalue} {config.cn_GREAT_effect_size} {config.top_terms_n} {config.adjp_cap} {config.or_cap} {config.adjp_th_GREAT} {config.cluster_summary}"
 log = "logs/rules/visualize_GREAT_Reactome_ATAC.log"
 tags = ["visualize", "GREAT"]
+report = "Summary of the top and most specific enrichment analysis results of group ATAC in database Reactome using GREAT."
 
 [rules.environment]
 conda = "envs/visualization.yaml"
@@ -109,6 +118,7 @@ output = [
 shell = "Rscript scripts/overview_plot.R {input[0]} {output[0]} {output[1]} LOLA LOLACore ATAC scripts/utils.R {config.cn_LOLA_term} {config.cn_LOLA_adj_pvalue} {config.cn_LOLA_effect_size} {config.top_terms_n} {config.adjp_cap} {config.or_cap} {config.adjp_th_LOLA} {config.cluster_summary}"
 log = "logs/rules/visualize_LOLA_LOLACore_ATAC.log"
 tags = ["visualize", "LOLA"]
+report = "Summary of the top and most specific enrichment analysis results of group ATAC in database LOLACore using LOLA."
 
 [rules.environment]
 conda = "envs/visualization.yaml"
@@ -125,6 +135,7 @@ output = [
 shell = "Rscript scripts/overview_plot.R {input[0]} {output[0]} {output[1]} pycisTarget hg38_screen_v10clust ATAC scripts/utils.R {config.cn_pycisTarget_term} {config.cn_pycisTarget_adj_pvalue} {config.cn_pycisTarget_effect_size} {config.top_terms_n} {config.adjp_cap} {config.or_cap} {config.adjp_th_pycisTarget} {config.cluster_summary}"
 log = "logs/rules/visualize_pycisTarget_hg38_screen_v10clust_ATAC.log"
 tags = ["visualize", "pycisTarget"]
+report = "Summary of the top and most specific enrichment analysis results of group ATAC in database hg38_screen_v10clust using pycisTarget."
 
 [rules.environment]
 conda = "envs/visualization.yaml"
@@ -141,6 +152,7 @@ output = [
 shell = "Rscript scripts/overview_plot.R {input[0]} {output[0]} {output[1]} RcisTarget hg38_500bp_up_100bp_down_v10clust ATAC scripts/utils.R {config.cn_RcisTarget_term} {config.cn_RcisTarget_adj_pvalue} {config.cn_RcisTarget_effect_size} {config.top_terms_n} {config.adjp_cap} {config.or_cap} {config.adjp_th_RcisTarget} {config.cluster_summary}"
 log = "logs/rules/visualize_RcisTarget_hg38_500bp_up_100bp_down_v10clust_ATAC.log"
 tags = ["visualize", "RcisTarget"]
+report = "Summary of the top and most specific enrichment analysis results of group ATAC in database hg38_500bp_up_100bp_down_v10clust using RcisTarget."
 
 [rules.environment]
 conda = "envs/visualization.yaml"

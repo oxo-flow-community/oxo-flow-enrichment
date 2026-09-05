@@ -77,7 +77,7 @@
   ],
   "excluded": [
     "env_export — conda env export requires the conda CLI inside the runtime environment and dumps the runtime env state, not the declared pins; exact pins are already declared in envs/*.yaml",
-    "report rendering — upstream wraps outputs in snakemake's report() (HTML report with .rst captions); oxo-flow has no report module, so config_export and annot_export are ported as plain rules (env_export is excluded separately above)",
+    "report rendering — upstream renders an HTML report via snakemake's report() wrapping outputs with .rst captions, categories and labels; the captions half is ported as `report` annotations on all 23 wrapped rules (needs engine 0.17.0+, rendered by the rule-captions report section), while the artifact-catalog book form (self-contained HTML, figures embedded, categories/labels) has no oxo-flow equivalent and remains unported",
     "note: the anticipated names liftover/enrichr/gost/single_region_mode do not exist in v3.0.1 (Enrichr appears only as a commented-out reference in gene_ORA_GSEApy.py and a database-source comment in config.yaml)"
   ],
   "rule_count": 48,
@@ -99,7 +99,7 @@
   ],
   "description": "Run a complete region set and gene set enrichment analysis on your own data: region overlap enrichment (LOLA), genomic region enrichment of annotated terms (rGREAT), region TFBS motif enrichment (pycisTarget), gene TFBS motif enrichment (RcisTarget), and gene over-representation analysis (ORA) and preranked GSEA (GSEApy). Every tool applies its own multiple-test correction; the workflow produces per-set enrichment plots, per-group summary plots, and reproducibility exports (configs/ and envs/). Official port of epigen/enrichment_analysis v3.0.1 with tool versions and commands pinned to the source.",
   "installation": {
-    "engine": "oxo-flow > 0.16.0 (needs the #254 empty-product fix for the optional txt_gene_sets fans; the default plan also runs on 0.16.0 with a warning-free test)",
+    "engine": "oxo-flow > 0.16.0 (needs the #254 empty-product fix for the optional txt_gene_sets fans; the default plan also runs on 0.16.0 with a warning-free test); report annotations need 0.17.0+ (ignored by older engines)",
     "toolchain": "conda envs — pinned (conda/mamba at runtime; five environments declared in main.oxoflow, exact pins from upstream)",
     "requirements": [
       "annotation.csv declaring each feature set (region set or ranked gene set), its path, background, and group",

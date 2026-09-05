@@ -2,7 +2,8 @@
 # Upstream env_export (conda env export per used environment) is not ported:
 # the conda CLI is not guaranteed to exist inside a conda-backend environment
 # and the playbook pins exact versions in envs/*.yaml already (see README
-# fidelity table).
+# fidelity table). Both rules carry the upstream report() caption
+# (workflow/report/configs.rst) via the `report` annotation.
 
 [workflow]
 name = "oxo-flow-enrichment-export"
@@ -17,6 +18,7 @@ output = ["{config.result_path}/configs/{config.project_name}_config.yaml"]
 shell = "cp {input[0]} {output[0]}"
 log = "logs/rules/config_export.log"
 tags = ["export", "reproducibility"]
+report = "Configuration and annotation files for documentation."
 
 [[rules]]
 name = "annot_export"
@@ -26,3 +28,4 @@ output = ["{config.result_path}/configs/{config.project_name}_annot.csv"]
 shell = "cp {input[0]} {output[0]}"
 log = "logs/rules/annot_export.log"
 tags = ["export", "reproducibility"]
+report = "Configuration and annotation files for documentation."
