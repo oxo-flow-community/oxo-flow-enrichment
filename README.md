@@ -140,8 +140,8 @@ exact ported state. Upstream attribution is retained in
 | visualize | `visualize_*` (9 blocks) | r-ggplot2 3.5.0, r-pheatmap 1.0.12 | identical command/logic; `cluster_summary` config key kept as upstream numeric flag |
 | config_export | `config_export` | — | upstream dumps the in-memory config dict; the port copies `config/config.yaml` (effective-config mirror) |
 | annot_export | `annot_export` | — | identical command |
-| env_export | not ported | — | `conda env export` needs the conda CLI inside the runtime env; exact pins are already declared in `envs/*.yaml` |
-| report rendering | `report` annotations (23 rules) | — | upstream's snakemake `report()` HTML book (figures embedded, categories/labels) has no oxo-flow equivalent; the caption half is ported as `report` annotations on all wrapped rules (needs oxo-flow 0.17.0+; rendered by the engine's rule-captions report section) — `env_export` stays unported (row above) |
+| env_export | engine-native export: `oxo-flow report --versions-yml <file> main.oxoflow` | — | oxo-flow ≥ 0.17.0 exports an nf-core-style versions.yml derived statically from the declared `envs/*.yaml` pins (one entry per rule, 48 entries), diffed in CI to catch undeclared dependency drift — the runtime `conda env export` itself is a Snakemake housekeeping step, not analysis logic |
+| report rendering | `report` annotations (23 rules) | — | upstream's snakemake `report()` HTML book (figures embedded, categories/labels) has no oxo-flow equivalent; the caption half is ported as `report` annotations on all wrapped rules (needs oxo-flow 0.17.0+; rendered by the engine's rule-captions report section) |
 
 Script ports: upstream scripts run inside snakemake's `snakemake@input/...`
 namespace; the port passes the same values as positional CLI arguments

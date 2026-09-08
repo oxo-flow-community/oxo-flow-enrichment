@@ -25,4 +25,12 @@ echo "==> debug: expanded commands contain no literal placeholders"
 "$OXO" debug main.oxoflow > /tmp/oxo-debug-$$.txt 2>&1
 grep -v WARN /tmp/oxo-debug-$$.txt | grep -v '{gene_set}' | grep -Eq '\{config\.|\{region_set\}' && { echo "unexpanded placeholders in debug output"; exit 1; } || true
 
+# Engine-native versions.yml export (env_export replacement): the declared
+# pins from envs/*.yaml, one entry per rule — diff this in CI to catch
+# undeclared dependency drift. Requires oxo-flow >= 0.17.0.
+"$OXO" report --versions-yml /tmp/oxo-versions-$$.yml main.oxoflow 2>/dev/null
+grep -q "^software:" /tmp/oxo-versions-$$.yml || { echo "versions.yml export missing software section"; exit 1; }
+n_software=$(grep -c "^  - key:" /tmp/oxo-versions-$$.yml)
+[ "$n_software" -ge 40 ] || { echo "versions.yml export has only $n_software entries (expected >= 40)"; exit 1; }
+
 echo "PASS"

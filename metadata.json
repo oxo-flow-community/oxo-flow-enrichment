@@ -76,7 +76,6 @@
     "visualize_pycisTarget_hg38_screen_v10clust_ATAC"
   ],
   "excluded": [
-    "env_export — conda env export requires the conda CLI inside the runtime environment and dumps the runtime env state, not the declared pins; exact pins are already declared in envs/*.yaml",
     "report rendering — upstream renders an HTML report via snakemake's report() wrapping outputs with .rst captions, categories and labels; the captions half is ported as `report` annotations on all 23 wrapped rules (needs engine 0.17.0+, rendered by the rule-captions report section), while the artifact-catalog book form (self-contained HTML, figures embedded, categories/labels) has no oxo-flow equivalent and remains unported"
   ],
   "not_applicable": [
