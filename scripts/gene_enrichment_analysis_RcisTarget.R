@@ -56,6 +56,23 @@ geneSets[[gene_set_name]] <- readLines(genes_file)
 
 background <- readLines(background_file)
 
+# quit early on empty input: with no usable background columns
+# importRankings returns a degenerate object and reRank crashes downstream
+# (tibble::add_column "New column has N rows, .data has 1 row"). Files that
+# exist but hold no gene names (blank or whitespace-only lines) count as
+# empty. Upstream behavior for tolerated empty results is to create the
+# output and exit 0.
+drop_blank <- function(x) x[nzchar(trimws(x))]
+gene_set_genes <- drop_blank(geneSets[[gene_set_name]])
+background_genes <- drop_blank(background)
+if (length(gene_set_genes) == 0 || length(background_genes) == 0) {
+  print("Empty gene set or background file; skipping RcisTarget analysis.")
+  file.create(result_path)
+  quit(save = "no", status = 0)
+}
+geneSets[[gene_set_name]] <- gene_set_genes
+background <- background_genes
+
 # load database, filter for background and re-rank
 rankingsDb <- importRankings(database_path, columns = background)
 motifRankings <- reRank(rankingsDb)
