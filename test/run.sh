@@ -13,7 +13,10 @@ echo "==> lint (warnings are acceptable, errors are not)"
 
 echo "==> dry-run with default config"
 "$OXO" dry-run main.oxoflow > /tmp/oxo-dryrun-$$.txt 2>&1
-grep -q "would execute" /tmp/oxo-dryrun-$$.txt
+# Engine headline wording changed in oxo-flow 0.20.1 (#432): the old
+# "DAG: (dry-run) N rules would execute" became "Plan: would run: ...".
+# Accept either so CI passes with both the latest release and older pins.
+grep -qE "would (execute|run)" /tmp/oxo-dryrun-$$.txt
 
 echo "==> debug: expanded commands contain no literal placeholders"
 # Lines carrying the intentional {gene_set} fan are excluded: the txt_gene_sets
